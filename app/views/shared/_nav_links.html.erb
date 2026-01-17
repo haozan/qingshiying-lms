@@ -2,4 +2,8 @@
 <%# This partial will be rendered in different contexts (desktop horizontal / mobile vertical) %>
 <%# The parent wrapper determines the layout %>
 
+<%= link_to "首页", root_path, class: "block px-3 py-2 md:p-0 rounded-lg md:rounded-none hover:bg-surface md:hover:bg-transparent text-secondary hover:text-primary transition-colors #{'font-semibold text-primary bg-surface/50 md:bg-transparent' if current_page?(root_path)}" %>
+
 <%= link_to "浏览课程", courses_path, class: "block px-3 py-2 md:p-0 rounded-lg md:rounded-none hover:bg-surface md:hover:bg-transparent text-secondary hover:text-primary transition-colors #{'font-semibold text-primary bg-surface/50 md:bg-transparent' if current_page?(courses_path)}" %>
+
+<%= link_to "关于镐赞", "https://www.haozanai.com", target: "_blank", rel: "noopener noreferrer", class: "block px-3 py-2 md:p-0 rounded-lg md:rounded-none hover:bg-surface md:hover:bg-transparent text-secondary hover:text-primary transition-colors" %>

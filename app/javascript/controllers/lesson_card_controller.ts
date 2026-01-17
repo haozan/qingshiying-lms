@@ -13,6 +13,8 @@ export default class extends Controller<HTMLElement> {
   declare readonly backTarget: HTMLElement
   declare readonly homeworkTextareaTarget: HTMLTextAreaElement
   declare readonly submitButtonTarget: HTMLButtonElement
+  declare readonly hasHomeworkTextareaTarget: boolean
+  declare readonly hasSubmitButtonTarget: boolean
   declare flippedValue: boolean
 
   connect(): void {

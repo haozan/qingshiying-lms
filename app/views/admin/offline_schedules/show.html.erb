@@ -20,7 +20,7 @@
 
         <%= link_to admin_offline_schedule_path(@offline_schedule.id),
             method: :delete,
-            data: { confirm: "Are you sure you want to delete this offline_schedule?" },
+            data: { confirm: "确定要删除此线下排期吗？" },
             class: "btn-danger" do %>
           <%= lucide_icon "trash-2", class: "w-5 h-5 mr-2" %>
           Delete

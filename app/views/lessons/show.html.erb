@@ -83,13 +83,6 @@
         </div>
 
         <div class="flex items-center gap-3">
-          <% if @progress&.status == 'completed' %>
-            <span class="badge-success flex items-center gap-2">
-              <%= lucide_icon "check", class: "w-4 h-4" %>
-              已完成
-            </span>
-          <% end %>
-          
           <% if @homework&.liked? %>
             <span class="badge-warning flex items-center gap-2">
               <%= lucide_icon "heart", class: "w-4 h-4" %>

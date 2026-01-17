@@ -43,28 +43,37 @@ Animation (add these for entrance effects):
 -->
 <!-- DO NOT modify data-controller, data-action, or data-dropdown-target attributes -->
 
-<div data-controller="dropdown" data-dropdown-close-on-click-outside-value="false">
+<div data-controller="dropdown pwa-install" data-dropdown-close-on-click-outside-value="false">
   <%# Unified sticky positioning for all pages %>
   <div class="sticky top-0 left-0 right-0 z-50">
     <nav class="backdrop-blur-lg bg-surface-elevated/70 border-b border-border shadow-sm">
     <div class="container-xl mx-auto px-6">
       <div class="flex items-center justify-between h-16">
 
-        <!-- Logo -->
-        <div class="flex items-center">
+        <!-- Logo and navigation links -->
+        <div class="flex items-center space-x-8">
           <%= link_to root_path, class: "flex items-center gap-2" do %>
         <%= image_tag "qinglion-logo.png", class: "w-8 h-8", alt: "青狮营" %>
         <span class="text-xl font-bold text-primary">青狮营</span>
       <% end %>
-        </div>
-
-        <!-- Desktop navigation -->
-        <div class="hidden">
-          <%= render 'shared/nav_links' %>
+          
+          <!-- Desktop navigation -->
+          <div class="hidden md:flex items-center space-x-6">
+            <%= render 'shared/nav_links' %>
+          </div>
         </div>
 
         <!-- Desktop auth -->
         <div class="hidden md:flex items-center space-x-4">
+          <!-- PWA Install Button (Desktop) -->
+          <button
+            data-pwa-install-target="installButton"
+            data-action="click->pwa-install#install"
+            class="hidden btn-ghost btn-sm flex items-center gap-2">
+            <%= lucide_icon "download", class: "w-4 h-4" %>
+            <span>安装应用</span>
+          </button>
+          
           <% if current_user %>
             <%= render 'shared/user_dropdown' %>
           <% else %>
@@ -102,6 +111,17 @@ Animation (add these for entrance effects):
         <!-- Mobile navigation -->
         <div class="mb-6 flex flex-col space-y-1">
           <%= render 'shared/nav_links' %>
+        </div>
+        
+        <!-- PWA Install Button (Mobile) -->
+        <div class="mb-4">
+          <button
+            data-pwa-install-target="installButton"
+            data-action="click->pwa-install#install"
+            class="hidden btn-primary btn-md w-full flex items-center justify-center gap-2">
+            <%= lucide_icon "download", class: "w-5 h-5" %>
+            <span>安装应用</span>
+          </button>
         </div>
 
         <!-- Mobile user menu -->

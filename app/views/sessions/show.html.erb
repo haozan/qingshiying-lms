@@ -2,10 +2,10 @@
     <div class="card-elevated">
       <div class="card-body">
         <div class="flex items-center justify-between mb-8">
-          <h1 class="text-3xl font-bold text-primary">Current Session Details</h1>
+          <h1 class="text-3xl font-bold text-primary">当前会话详情</h1>
           <span class="badge-success flex items-center">
             <span class="w-2 h-2 bg-success rounded-full mr-2"></span>
-            Active
+            活跃
           </span>
         </div>
 
@@ -17,20 +17,20 @@
                 <svg class="w-5 h-5 text-muted mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                 </svg>
-                User Information
+                用户信息
               </h3>
               <dl class="space-y-3">
                 <div>
-                  <dt class="form-label">Name</dt>
+                  <dt class="form-label">姓名</dt>
                   <dd class="text-primary font-medium"><%= @user.name %></dd>
                 </div>
                 <div>
-                  <dt class="form-label">Email</dt>
+                  <dt class="form-label">邮箱</dt>
                   <dd class="text-primary font-medium"><%= @user.email %></dd>
                 </div>
                 <div>
-                  <dt class="form-label">Member since</dt>
-                  <dd class="text-secondary"><%= @user.created_at.strftime("%B %d, %Y") %></dd>
+                  <dt class="form-label">注册时间</dt>
+                  <dd class="text-secondary"><%= @user.created_at.strftime("%Y年%m月%d日") %></dd>
                 </div>
               </dl>
             </div>
@@ -43,25 +43,25 @@
                 <svg class="w-5 h-5 text-muted mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                 </svg>
-                Session Information
+                会话信息
               </h3>
               <dl class="space-y-3">
                 <div>
-                  <dt class="form-label">Session ID</dt>
+                  <dt class="form-label">会话 ID</dt>
                   <dd class="text-primary font-mono text-sm"><%= @session.id %></dd>
                 </div>
                 <div>
-                  <dt class="form-label">Started</dt>
+                  <dt class="form-label">开始时间</dt>
                   <dd class="text-primary">
-                    <%= @session.created_at.strftime("%B %d, %Y at %l:%M %p") %>
-                    <span class="text-muted text-sm">(<%= time_ago_in_words(@session.created_at) %> ago)</span>
+                    <%= @session.created_at.strftime("%Y年%m月%d日 %H:%M") %>
+                    <span class="text-muted text-sm">(<%= time_ago_in_words(@session.created_at) %>前)</span>
                   </dd>
                 </div>
                 <div>
-                  <dt class="form-label">Last Activity</dt>
+                  <dt class="form-label">最后活跃</dt>
                   <dd class="text-primary">
-                    <%= @session.updated_at.strftime("%B %d, %Y at %l:%M %p") %>
-                    <span class="text-muted text-sm">(<%= time_ago_in_words(@session.updated_at) %> ago)</span>
+                    <%= @session.updated_at.strftime("%Y年%m月%d日 %H:%M") %>
+                    <span class="text-muted text-sm">(<%= time_ago_in_words(@session.updated_at) %>前)</span>
                   </dd>
                 </div>
               </dl>
@@ -76,17 +76,17 @@
               <svg class="w-5 h-5 text-muted mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
               </svg>
-              Device & Security
+              设备与安全
             </h3>
             <dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <dt class="form-label">IP Address</dt>
-                <dd class="text-primary font-mono"><%= @session.ip_address || 'Unknown' %></dd>
+                <dt class="form-label">IP 地址</dt>
+                <dd class="text-primary font-mono"><%= @session.ip_address || '未知' %></dd>
               </div>
               <div>
-                <dt class="form-label">User Agent</dt>
+                <dt class="form-label">用户代理</dt>
                 <dd class="text-primary break-words text-sm">
-                  <%= @session.user_agent.present? ? @session.user_agent : 'Unknown Device' %>
+                  <%= @session.user_agent.present? ? @session.user_agent : '未知设备' %>
                 </dd>
               </div>
             </dl>
@@ -102,10 +102,9 @@
               </svg>
             </div>
             <div class="ml-3">
-              <h3 class="text-sm font-medium">Security Notice</h3>
+              <h3 class="text-sm font-medium">安全提示</h3>
               <p class="mt-1 text-sm">
-                If you don't recognize this session or believe your account has been compromised,
-                please sign out immediately and change your password.
+                如果您不认识此会话或认为您的账户已被盗用，请立即登出并修改密码。
               </p>
             </div>
           </div>
@@ -114,11 +113,11 @@
         <!-- Action Buttons -->
         <div class="card-footer">
           <div class="flex flex-col sm:flex-row gap-3">
-            <%= link_to "View All Sessions", devices_session_path, class: "btn-ghost" %>
-            <%= link_to "Edit Profile", profile_path, class: "btn-primary" %>
-            <%= button_to "Sign Out", sign_out_path, method: :delete,
+            <%= link_to "查看所有会话", devices_session_path, class: "btn-ghost" %>
+            <%= link_to "编辑资料", profile_path, class: "btn-primary" %>
+            <%= button_to "登出", sign_out_path, method: :delete,
                 class: "btn-danger",
-                data: { confirm: "Are you sure you want to sign out?" } %>
+                data: { confirm: "确定要登出吗？" } %>
           </div>
         </div>
     </div>

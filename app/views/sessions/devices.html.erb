@@ -1,5 +1,5 @@
 <div class="container-lg py-12">
-    <h1 class="text-3xl font-bold text-primary mb-8">Active Sessions</h1>
+    <h1 class="text-3xl font-bold text-primary mb-8">活跃会话</h1>
 
     <div class="space-y-4">
       <% Current.user.sessions.order(created_at: :desc).each do |session| %>
@@ -15,28 +15,28 @@
                   </div>
                   <div>
                     <h3 class="text-lg font-medium text-primary mb-2">
-                      <%= session.user_agent.present? ? session.user_agent.split(" ").first : "Unknown Device" %>
+                      <%= session.user_agent.present? ? session.user_agent.split(" ").first : "未知设备" %>
                       <% if session == Current.session %>
                         <span class="badge-success ml-2">
-                          Current Session
+                          当前会话
                         </span>
                       <% end %>
                     </h3>
                     <p class="text-sm text-secondary mb-1">
                       IP: <span class="font-mono"><%= session.ip_address %></span> •
-                      Last active: <%= time_ago_in_words(session.updated_at) %> ago
+                      最后活跃: <%= time_ago_in_words(session.updated_at) %>前
                     </p>
                     <p class="text-sm text-muted">
-                      Created: <%= session.created_at.strftime("%B %d, %Y at %l:%M %p") %>
+                      创建时间: <%= session.created_at.strftime("%Y年%m月%d日 %H:%M") %>
                     </p>
                   </div>
                 </div>
               </div>
               <% unless session == Current.session %>
                 <div class="flex-shrink-0">
-                  <%= button_to "Log out", destroy_one_session_path(id: session.id), method: :delete,
+                  <%= button_to "登出", destroy_one_session_path(id: session.id), method: :delete,
                       class: "btn-danger btn-sm",
-                      data: { confirm: "Are you sure you want to sign out this session?" } %>
+                      data: { confirm: "确定要登出此会话吗？" } %>
                 </div>
               <% end %>
             </div>
@@ -46,6 +46,6 @@
     </div>
 
     <div class="mt-8 text-center">
-      <%= link_to "Back to Profile", profile_path, class: "btn-ghost" %>
+      <%= link_to "返回个人资料", profile_path, class: "btn-ghost" %>
   </div>
 </div>

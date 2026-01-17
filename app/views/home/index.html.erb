@@ -21,7 +21,7 @@
       </p>
       <div class="mt-10 flex items-center justify-center gap-x-6">
         <% if current_user %>
-          <%= link_to "继续学习", courses_path, class: "btn-primary" %>
+          <%= link_to "我的课程", courses_path, class: "btn-primary" %>
           <%= link_to "我的进度", dashboard_progresses_path, class: "btn-secondary" %>
         <% else %>
           <%= link_to "立即注册", sign_up_path, class: "btn-primary" %>
@@ -99,10 +99,10 @@
     <div class="card bg-gradient-to-r from-primary/10 to-secondary/10 border-0">
       <div class="card-body text-center py-16">
         <h2 class="text-3xl font-bold tracking-tight text-base-content sm:text-4xl mb-4">
-          准备好开始学习了吗？
+          立即开始
         </h2>
         <p class="text-lg text-base-content/80 mb-8">
-          加入青狮营，与优秀的学习者一起成长
+          加入青狮营 开启极速蜕变
         </p>
         <div class="flex gap-4 justify-center">
           <% if current_user %>
