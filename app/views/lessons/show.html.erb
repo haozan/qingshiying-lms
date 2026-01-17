@@ -6,10 +6,19 @@
   <aside data-sidebar-target="sidebar"
          class="w-80 bg-surface-elevated border-r border-border overflow-y-auto fixed left-0 top-0 bottom-0 z-30 transition-transform duration-300 -translate-x-full">
     <div class="p-6 border-b border-border sticky top-0 bg-surface-elevated z-10">
-      <%= link_to courses_path, class: "flex items-center gap-2 text-muted hover:text-foreground transition-colors mb-4" do %>
-        <%= lucide_icon "arrow-left", class: "w-5 h-5" %>
-        <span>返回课程列表</span>
-      <% end %>
+      <div class="flex items-center justify-between mb-4">
+        <%= link_to courses_path, class: "flex items-center gap-2 text-muted hover:text-foreground transition-colors" do %>
+          <%= lucide_icon "arrow-left", class: "w-5 h-5" %>
+          <span>返回课程列表</span>
+        <% end %>
+        
+        <!-- 关闭侧边栏按钮 -->
+        <button data-action="click->sidebar#toggle"
+                class="btn-ghost-sm p-2 -mr-2"
+                title="关闭目录">
+          <%= lucide_icon "x", class: "w-5 h-5" %>
+        </button>
+      </div>
       
       <h2 class="text-xl font-bold text-foreground"><%= @course.name %></h2>
       <p class="text-sm text-muted mt-1"><%= @course.chapters.count %> 章 · <%= @course.lessons.count %> 节</p>
