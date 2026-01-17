@@ -1,0 +1,14 @@
+<%= turbo_stream.replace "flash-messages" do %>
+  <div data-controller="flash"
+       data-flash-message-value="作业提交成功! 本节课已标记为完成。"
+       data-flash-type-value="success"
+       data-flash-position-value="top-center"
+       data-flash-duration-value="3000"></div>
+<% end %>
+
+<%= turbo_stream.replace dom_id(@lesson) do %>
+  <script>
+    // 刷新页面以显示已提交状态
+    window.location.reload();
+  </script>
+<% end %>

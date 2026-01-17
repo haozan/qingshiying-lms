@@ -1,0 +1,108 @@
+<!-- 课程首页 -->
+<div class="min-h-screen bg-surface">
+  <!-- 继续学习卡片 -->
+  <% if @last_position %>
+    <section data-testid="home-first-section" class="pt-28 pb-12 bg-gradient-to-br from-primary/10 to-secondary/10">
+      <div class="container-xl mx-auto px-6">
+        <div class="card-elevated max-w-4xl mx-auto p-8 rounded-2xl hover:shadow-xl transition-shadow cursor-pointer" onclick="window.location='<%= lesson_path(@last_position[:lesson]) %>'">
+          <div class="flex items-center gap-4 mb-4">
+            <%= lucide_icon "play-circle", class: "w-8 h-8 text-primary" %>
+            <div>
+              <h2 class="text-2xl font-bold text-foreground">继续学习</h2>
+              <p class="text-muted">从上次学习的地方开始</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-4">
+            <div class="flex-1">
+              <p class="text-lg font-semibold text-foreground mb-1"><%= @last_position[:course].name %></p>
+              <p class="text-secondary">
+                第 <%= @last_position[:chapter].position + 1 %> 章 · 
+                第 <%= @last_position[:lesson].position + 1 %> 节 · 
+                <%= @last_position[:lesson].name %>
+              </p>
+            </div>
+            
+            <%= lucide_icon "arrow-right", class: "w-6 h-6 text-primary" %>
+          </div>
+        </div>
+      </div>
+    </section>
+  <% end %>
+
+  <!-- 课程列表 -->
+  <section class="<%= @last_position ? 'py-16' : 'pt-28 pb-16' %>">
+    <div class="container-xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-foreground mb-4">探索课程</h1>
+        <p class="text-lg text-secondary">选择适合你的学习路径</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <% @courses.each do |course| %>
+          <div class="card-elevated group hover:shadow-2xl transition-all duration-300 overflow-hidden rounded-2xl">
+            <!-- 课程头部渐变 -->
+            <div class="h-32 bg-gradient-to-br <%= course_gradient_class(course) %> relative overflow-hidden">
+              <div class="absolute inset-0 opacity-20">
+                <div class="absolute top-4 right-4 w-24 h-24 bg-surface rounded-full blur-2xl"></div>
+              </div>
+              
+              <div class="relative z-10 p-6 flex items-center justify-between">
+                <div class="w-12 h-12 bg-surface/20 backdrop-blur rounded-xl flex items-center justify-center">
+                  <%= lucide_icon course_icon(course), class: "w-6 h-6 text-surface" %>
+                </div>
+                
+                <% if course.buyout? %>
+                  <span class="badge-success text-xs">买断制</span>
+                <% else %>
+                  <span class="badge-warning text-xs">年订阅</span>
+                <% end %>
+              </div>
+            </div>
+
+            <!-- 课程内容 -->
+            <div class="p-6">
+              <h3 class="text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                <%= course.name %>
+              </h3>
+              
+              <p class="text-secondary mb-4 line-clamp-2">
+                <%= course.description || "系统学习#{course.name},掌握核心技能" %>
+              </p>
+
+              <div class="flex items-center gap-4 mb-6 text-sm text-muted">
+                <div class="flex items-center gap-2">
+                  <%= lucide_icon "book-open", class: "w-4 h-4" %>
+                  <span><%= course.chapters.count %> 章</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <%= lucide_icon "video", class: "w-4 h-4" %>
+                  <span><%= course.lessons.count %> 节</span>
+                </div>
+              </div>
+
+              <!-- 订阅状态 -->
+              <% if @subscriptions[course.id]&.active? %>
+                <%= link_to course_path(course), class: "btn-primary w-full flex items-center justify-center gap-2" do %>
+                  <%= lucide_icon "play-circle", class: "w-5 h-5" %>
+                  <span>继续学习</span>
+                <% end %>
+                
+                <% if course.subscription? %>
+                  <p class="text-center text-sm text-muted mt-3">
+                    有效期至: <%= @subscriptions[course.id].expires_at&.strftime('%Y-%m-%d') || '永久' %>
+                  </p>
+                <% end %>
+              <% else %>
+                <%= link_to course_path(course), class: "btn-outline w-full flex items-center justify-center gap-2 group-hover:btn-primary transition-all" do %>
+                  <%= lucide_icon "eye", class: "w-5 h-5" %>
+                  <span>查看详情</span>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+</div>

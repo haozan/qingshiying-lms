@@ -1,0 +1,101 @@
+<div class="relative isolate overflow-hidden bg-base">
+  <!-- Hero Section -->
+  <div data-testid="home-first-section" class="mx-auto max-w-7xl px-6 pt-24 pb-12 sm:pt-32 lg:px-8">
+    <div class="mx-auto max-w-2xl text-center">
+      <h1 class="text-4xl font-bold tracking-tight text-base-content sm:text-6xl bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+        青狮营 - AI驱动的学习平台
+      </h1>
+      <p class="mt-6 text-lg leading-8 text-base-content/80">
+        通过专业课程体系，帮助你掌握AI应用、写作运营和AI编程技能。与千万学习者一起，开启成长之旅。
+      </p>
+      <div class="mt-10 flex items-center justify-center gap-x-6">
+        <% if current_user %>
+          <%= link_to "继续学习", courses_path, class: "btn-primary" %>
+          <%= link_to "我的进度", dashboard_progresses_path, class: "btn-secondary" %>
+        <% else %>
+          <%= link_to "立即注册", sign_up_path, class: "btn-primary" %>
+          <%= link_to "课程介绍", courses_path, class: "btn-secondary" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="mx-auto max-w-7xl px-6 lg:px-8 pb-24">
+    <div class="mx-auto max-w-2xl text-center mb-16">
+      <h2 class="text-3xl font-bold tracking-tight text-base-content sm:text-4xl">核心特色</h2>
+      <p class="mt-4 text-lg text-base-content/80">专业的学习体验，助力你的成长</p>
+    </div>
+    
+    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="card">
+        <div class="card-body">
+          <%= lucide_icon "brain", class: "w-12 h-12 text-primary mb-4" %>
+          <h3 class="text-xl font-semibold text-base-content mb-2">AI课程</h3>
+          <p class="text-base-content/70">掌握AI工具的实战应用，提升工作效率</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <%= lucide_icon "pen-tool", class: "w-12 h-12 text-secondary mb-4" %>
+          <h3 class="text-xl font-semibold text-base-content mb-2">写作运营课</h3>
+          <p class="text-base-content/70">系统学习内容创作与运营策略，打造个人品牌</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <%= lucide_icon "code", class: "w-12 h-12 text-primary mb-4" %>
+          <h3 class="text-xl font-semibold text-base-content mb-2">AI编程课</h3>
+          <p class="text-base-content/70">学习AI辅助编程，支持线下面授指导</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <%= lucide_icon "flip-horizontal", class: "w-12 h-12 text-secondary mb-4" %>
+          <h3 class="text-xl font-semibold text-base-content mb-2">卡片式学习</h3>
+          <p class="text-base-content/70">创新的3D翻转卡片，视频与作业完美结合</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <%= lucide_icon "trending-up", class: "w-12 h-12 text-primary mb-4" %>
+          <h3 class="text-xl font-semibold text-base-content mb-2">进度跟踪</h3>
+          <p class="text-base-content/70">实时记录学习进度，可视化成长轨迹</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <%= lucide_icon "calendar-check", class: "w-12 h-12 text-secondary mb-4" %>
+          <h3 class="text-xl font-semibold text-base-content mb-2">线下预约</h3>
+          <p class="text-base-content/70">AI编程课学员专享线下面授机会</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Section -->
+  <div class="mx-auto max-w-7xl px-6 lg:px-8 pb-24">
+    <div class="card bg-gradient-to-r from-primary/10 to-secondary/10 border-0">
+      <div class="card-body text-center py-16">
+        <h2 class="text-3xl font-bold tracking-tight text-base-content sm:text-4xl mb-4">
+          准备好开始学习了吗？
+        </h2>
+        <p class="text-lg text-base-content/80 mb-8">
+          加入青狮营，与优秀的学习者一起成长
+        </p>
+        <div class="flex gap-4 justify-center">
+          <% if current_user %>
+            <%= link_to "浏览课程", courses_path, class: "btn-primary btn-lg" %>
+          <% else %>
+            <%= link_to "立即注册", sign_up_path, class: "btn-primary btn-lg" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

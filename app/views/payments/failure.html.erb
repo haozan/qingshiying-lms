@@ -1,0 +1,67 @@
+<% content_for :title, "支付失败" %>
+
+<div class="min-h-screen bg-gradient-to-br from-red-50 to-orange-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center py-12">
+  <div class="container-lg">
+    <div class="max-w-2xl mx-auto">
+      <!-- Failure Card -->
+      <div class="card border-2 border-red-200 dark:border-red-800">
+        <div class="card-body text-center">
+          <!-- Failure Icon -->
+          <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center animate-in zoom-in duration-300">
+            <%= lucide_icon "x-circle", class: "w-12 h-12 text-white" %>
+          </div>
+
+          <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-50 mb-3">支付失败</h1>
+          <p class="text-xl text-gray-600 dark:text-gray-400 mb-8">
+            很抱歉,支付过程中出现了问题
+          </p>
+
+          <!-- Error Info -->
+          <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 mb-8">
+            <div class="flex items-start gap-3">
+              <%= lucide_icon "alert-triangle", class: "w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" %>
+              <div class="text-left">
+                <p class="font-medium text-red-800 dark:text-red-300 mb-2">可能的原因:</p>
+                <ul class="text-sm text-red-700 dark:text-red-400 space-y-1 list-disc list-inside">
+                  <li>支付信息填写有误</li>
+                  <li>银行卡余额不足</li>
+                  <li>网络连接中断</li>
+                  <li>支付时间超时</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row gap-4 mb-8">
+            <% if @payment %>
+              <%= link_to pay_payment_path(@payment), method: :post, class: "btn-primary flex-1" do %>
+                <%= lucide_icon "refresh-cw", class: "w-5 h-5 mr-2" %>
+                重新支付
+              <% end %>
+            <% else %>
+              <%= link_to courses_path, class: "btn-primary flex-1" do %>
+                <%= lucide_icon "book-open", class: "w-5 h-5 mr-2" %>
+                浏览课程
+              <% end %>
+            <% end %>
+            <%= link_to root_path, class: "btn-ghost flex-1" do %>
+              <%= lucide_icon "home", class: "w-5 h-5 mr-2" %>
+              返回首页
+            <% end %>
+          </div>
+
+          <!-- Help Section -->
+          <div class="pt-8 border-t border-gray-200 dark:border-gray-700">
+            <p class="text-gray-600 dark:text-gray-400 mb-2">
+              如果问题持续存在,请联系客服
+            </p>
+            <p class="text-sm text-gray-500 dark:text-gray-500">
+              我们会尽快帮您解决问题
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

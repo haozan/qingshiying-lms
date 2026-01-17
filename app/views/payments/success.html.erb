@@ -1,0 +1,85 @@
+<% content_for :title, "支付成功" %>
+
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center py-12">
+  <div class="container-lg">
+    <div class="max-w-2xl mx-auto">
+      <!-- Success Card -->
+      <div class="card border-2 border-green-200 dark:border-green-800">
+        <div class="card-body text-center">
+          <!-- Success Icon -->
+          <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center animate-in zoom-in duration-300">
+            <%= lucide_icon "check-circle", class: "w-12 h-12 text-white" %>
+          </div>
+
+          <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-50 mb-3">支付成功!</h1>
+          <p class="text-xl text-gray-600 dark:text-gray-400 mb-8">
+            恭喜,您已成功订阅课程
+          </p>
+
+          <% if @payment&.payable_type == 'Subscription' %>
+            <% subscription = @payment.payable %>
+            <% course = subscription.course %>
+            
+            <!-- Course Info -->
+            <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 mb-6">
+              <div class="flex items-center justify-center gap-4 mb-4">
+                <div class="w-16 h-16 rounded-lg bg-gradient-to-br <%= course_gradient_class(course) %> flex items-center justify-center">
+                  <%= lucide_icon course_icon(course), class: "w-8 h-8 text-white" %>
+                </div>
+                <div class="text-left">
+                  <h3 class="text-xl font-bold text-gray-900 dark:text-gray-50"><%= course.name %></h3>
+                  <% if subscription.payment_type == 'buyout' %>
+                    <span class="badge badge-success">永久访问</span>
+                  <% else %>
+                    <span class="badge badge-info">有效期至 <%= subscription.expires_at.strftime('%Y-%m-%d') %></span>
+                  <% end %>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div>
+                  <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">支付金额</div>
+                  <div class="text-2xl font-bold text-primary">¥<%= sprintf('%.2f', @payment.amount) %></div>
+                </div>
+                <div>
+                  <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">订单编号</div>
+                  <div class="text-sm font-mono text-gray-900 dark:text-gray-50">#<%= @payment.id %></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4">
+              <%= link_to course, class: "btn-primary flex-1" do %>
+                <%= lucide_icon "play-circle", class: "w-5 h-5 mr-2" %>
+                开始学习
+              <% end %>
+              <%= link_to dashboard_progresses_path, class: "btn-ghost flex-1" do %>
+                <%= lucide_icon "layout-dashboard", class: "w-5 h-5 mr-2" %>
+                我的学习
+              <% end %>
+            </div>
+          <% else %>
+            <!-- Generic Success -->
+            <div class="flex flex-col gap-4">
+              <%= link_to courses_path, class: "btn-primary" do %>
+                <%= lucide_icon "book-open", class: "w-5 h-5 mr-2" %>
+                浏览课程
+              <% end %>
+              <%= link_to root_path, class: "btn-ghost" do %>
+                返回首页
+              <% end %>
+            </div>
+          <% end %>
+
+          <!-- Thank You Message -->
+          <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <p class="text-gray-600 dark:text-gray-400">
+              感谢您的信任与支持! 如有任何问题,请随时联系我们。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

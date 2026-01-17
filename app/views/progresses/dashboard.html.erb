@@ -1,0 +1,170 @@
+<% content_for :title, "我的学习" %>
+
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <div class="container-xl py-8">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-50 mb-2">我的学习</h1>
+      <p class="text-gray-600 dark:text-gray-400">查看你的学习进度和成就</p>
+    </div>
+
+    <!-- Progress Stats Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <% @progress_stats.each do |stat| %>
+        <div class="card border-2 <%= stat[:subscription].expires_at && stat[:subscription].expires_at < 7.days.from_now ? 'border-red-200 dark:border-red-800' : 'border-primary/20' %>">
+          <div class="card-body">
+            <!-- Course Header -->
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br <%= course_gradient_class(stat[:course]) %> flex items-center justify-center text-white">
+                  <%= lucide_icon course_icon(stat[:course]), class: "w-6 h-6" %>
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold text-gray-900 dark:text-gray-50"><%= stat[:course].name %></h3>
+                  <% if stat[:course].buyout? %>
+                    <span class="badge badge-success text-xs">已买断</span>
+                  <% elsif stat[:subscription].expires_at %>
+                    <% days_left = (stat[:subscription].expires_at.to_date - Date.current).to_i %>
+                    <% if days_left < 7 %>
+                      <span class="badge badge-danger text-xs">剩余 <%= days_left %> 天</span>
+                    <% elsif days_left < 30 %>
+                      <span class="badge badge-warning text-xs">剩余 <%= days_left %> 天</span>
+                    <% else %>
+                      <span class="badge badge-info text-xs">有效期至 <%= stat[:subscription].expires_at.strftime('%Y-%m-%d') %></span>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+              
+              <%= link_to "继续学习", stat[:course], class: "btn-primary btn-sm" %>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mb-4">
+              <div class="flex justify-between text-sm mb-2">
+                <span class="text-gray-600 dark:text-gray-400">学习进度</span>
+                <span class="font-bold text-primary"><%= stat[:completion_rate] %>%</span>
+              </div>
+              <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                <div class="bg-gradient-to-r from-primary to-secondary h-full rounded-full transition-all duration-500"
+                     style="width: <%= stat[:completion_rate] %>%"></div>
+              </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">已完成课时</div>
+                <div class="text-2xl font-bold text-gray-900 dark:text-gray-50">
+                  <%= stat[:completed_lessons] %><span class="text-base text-gray-500">/<%= stat[:total_lessons] %></span>
+                </div>
+              </div>
+              <div>
+                <div class="text-sm text-gray-600 dark:text-gray-400">剩余课时</div>
+                <div class="text-2xl font-bold text-gray-900 dark:text-gray-50">
+                  <%= stat[:total_lessons] - stat[:completed_lessons] %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Recent Homeworks Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Recent Submissions -->
+      <div class="card">
+        <div class="card-header border-b border-gray-200 dark:border-gray-700">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-gray-50 flex items-center gap-2">
+            <%= lucide_icon "clock", class: "w-5 h-5" %>
+            最近提交
+          </h2>
+        </div>
+        <div class="card-body p-0">
+          <% if @recent_homeworks.any? %>
+            <div class="divide-y divide-gray-200 dark:divide-gray-700">
+              <% @recent_homeworks.each do |homework| %>
+                <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                  <div class="flex items-start justify-between mb-2">
+                    <div class="flex-1">
+                      <div class="text-sm font-medium text-primary mb-1">
+                        <%= homework.lesson.course.name %>
+                      </div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                        <%= homework.lesson.chapter.name %> / <%= homework.lesson.name %>
+                      </div>
+                      <div class="text-sm text-gray-700 dark:text-gray-300">
+                        <%= truncate(homework.content, length: 80) %>
+                      </div>
+                    </div>
+                    <% if homework.liked? %>
+                      <%= lucide_icon "heart", class: "w-5 h-5 text-red-500 fill-current ml-3" %>
+                    <% end %>
+                  </div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400">
+                    <%= time_ago_in_words(homework.created_at) %>前提交
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="text-center py-12">
+              <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                <%= lucide_icon "file-text", class: "w-8 h-8 text-gray-400" %>
+              </div>
+              <p class="text-gray-500 dark:text-gray-400">还没有提交过作业</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Liked Homeworks -->
+      <div class="card">
+        <div class="card-header border-b border-gray-200 dark:border-gray-700">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-gray-50 flex items-center gap-2">
+            <%= lucide_icon "heart", class: "w-5 h-5 text-red-500" %>
+            获得点赞
+          </h2>
+        </div>
+        <div class="card-body p-0">
+          <% if @liked_homeworks.any? %>
+            <div class="divide-y divide-gray-200 dark:divide-gray-700">
+              <% @liked_homeworks.each do |homework| %>
+                <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                  <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center flex-shrink-0">
+                      <%= lucide_icon "heart", class: "w-5 h-5 text-white fill-current" %>
+                    </div>
+                    <div class="flex-1">
+                      <div class="text-sm font-medium text-primary mb-1">
+                        <%= homework.lesson.course.name %>
+                      </div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                        <%= homework.lesson.chapter.name %> / <%= homework.lesson.name %>
+                      </div>
+                      <div class="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                        <%= truncate(homework.content, length: 100) %>
+                      </div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">
+                        <%= homework.liked_at.strftime('%Y-%m-%d %H:%M') %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="text-center py-12">
+              <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-red-100 to-pink-100 dark:from-red-900 dark:to-pink-900 rounded-full flex items-center justify-center">
+                <%= lucide_icon "heart", class: "w-8 h-8 text-red-500" %>
+              </div>
+              <p class="text-gray-500 dark:text-gray-400 mb-2">还没有获得点赞</p>
+              <p class="text-xs text-gray-400 dark:text-gray-500">认真完成作业,争取获得导师的点赞吧!</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

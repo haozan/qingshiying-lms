@@ -1,0 +1,244 @@
+<!-- 卡片式学习页面 -->
+<div class="fixed inset-0 bg-surface flex" 
+     data-controller="sidebar"
+     data-sidebar-visible-value="false">
+  <!-- 侧边栏目录 -->
+  <aside data-sidebar-target="sidebar"
+         class="w-80 bg-surface-elevated border-r border-border overflow-y-auto fixed left-0 top-0 bottom-0 z-30 transition-transform duration-300 -translate-x-full">
+    <div class="p-6 border-b border-border sticky top-0 bg-surface-elevated z-10">
+      <%= link_to courses_path, class: "flex items-center gap-2 text-muted hover:text-foreground transition-colors mb-4" do %>
+        <%= lucide_icon "arrow-left", class: "w-5 h-5" %>
+        <span>返回课程列表</span>
+      <% end %>
+      
+      <h2 class="text-xl font-bold text-foreground"><%= @course.name %></h2>
+      <p class="text-sm text-muted mt-1"><%= @course.chapters.count %> 章 · <%= @course.lessons.count %> 节</p>
+    </div>
+
+    <nav class="p-4">
+      <% @chapters.each do |chapter| %>
+        <div class="mb-6">
+          <h3 class="text-sm font-semibold text-foreground mb-3 px-3">
+            第 <%= chapter.position + 1 %> 章 · <%= chapter.name %>
+          </h3>
+          
+          <ul class="space-y-1">
+            <% chapter.lessons.each do |lesson| %>
+              <% is_current = lesson.id == @lesson.id %>
+              <% is_completed = lesson.completed_by?(current_user) %>
+              <% is_locked = !lesson.free? && !current_user.has_access_to?(@course) %>
+              
+              <li>
+                <%= link_to lesson_path(lesson), 
+                    class: "flex items-center gap-3 px-3 py-2 rounded-lg transition-all #{is_current ? 'bg-primary text-surface' : 'text-secondary hover:bg-surface-elevated'} #{is_locked ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}" do %>
+                  
+                  <% if is_locked %>
+                    <%= lucide_icon "lock", class: "w-4 h-4 shrink-0" %>
+                  <% elsif is_completed %>
+                    <%= lucide_icon "check-circle", class: "w-4 h-4 shrink-0 text-success" %>
+                  <% else %>
+                    <div class="w-4 h-4 shrink-0 rounded-full border-2 <%= is_current ? 'border-surface' : 'border-muted' %>"></div>
+                  <% end %>
+                  
+                  <span class="flex-1 text-sm truncate"><%= lesson.name %></span>
+                  
+                  <% if lesson.has_video? %>
+                    <%= lucide_icon "video", class: "w-4 h-4 shrink-0" %>
+                  <% end %>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+    </nav>
+  </aside>
+
+  <!-- 主视窗 - 卡片翻转区域 -->
+  <main class="flex-1 overflow-hidden">
+    <div class="h-full flex flex-col">
+      <!-- 顶部导航条 -->
+      <div class="bg-surface-elevated border-b border-border px-6 py-4 flex items-center justify-between">
+        <!-- 侧边栏切换按钮 -->
+        <button data-action="click->sidebar#toggle"
+                class="btn-ghost mr-4 flex items-center gap-2">
+          <%= lucide_icon "menu", class: "w-5 h-5" %>
+          <span>目录</span>
+        </button>
+        
+        <div>
+          <p class="text-sm text-muted mb-1">
+            第 <%= @chapter.position + 1 %> 章 · 第 <%= @lesson.position + 1 %> 节
+          </p>
+          <h1 class="text-2xl font-bold text-foreground"><%= @lesson.name %></h1>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <% if @progress&.status == 'completed' %>
+            <span class="badge-success flex items-center gap-2">
+              <%= lucide_icon "check", class: "w-4 h-4" %>
+              已完成
+            </span>
+          <% end %>
+          
+          <% if @homework&.liked? %>
+            <span class="badge-warning flex items-center gap-2">
+              <%= lucide_icon "heart", class: "w-4 h-4" %>
+              导师点赞
+            </span>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- 遮罩层 (点击关闭侧边栏) -->
+      <div data-action="click->sidebar#toggle"
+           data-sidebar-target="overlay"
+           class="fixed inset-0 bg-foreground/20 z-20 hidden"></div>
+
+      <!-- 卡片翻转容器 -->
+      <div class="flex-1 p-8" 
+           data-controller="lesson-card"
+           data-lesson-card-flipped-value="false"
+           style="perspective: 1000px;">
+        
+        <div class="w-full h-full max-w-5xl mx-auto" 
+             data-lesson-card-target="card"
+             style="transform-style: preserve-3d; transition: transform 0.6s; position: relative;">
+          
+          <!-- 正面: 学习内容 -->
+          <div data-lesson-card-target="front"
+               class="absolute inset-0 backface-hidden"
+               style="backface-visibility: hidden;">
+            
+            <div class="card-elevated p-8 rounded-2xl h-full flex flex-col">
+              <!-- 视频区域 -->
+              <% if @lesson.has_video? %>
+                <div class="mb-8 rounded-xl overflow-hidden bg-foreground/5">
+                  <div class="aspect-video"
+                       data-controller="qiniu-player"
+                       data-qiniu-player-url-value="<%= @lesson.video_url %>"
+                       data-qiniu-player-lesson-id-value="<%= @lesson.id %>">
+                    <div data-qiniu-player-target="container" class="w-full h-full"></div>
+                  </div>
+                </div>
+              <% end %>
+
+              <!-- 课程内容 (Markdown渲染) -->
+              <div class="prose prose-lg max-w-none flex-1 overflow-y-auto">
+                <%= raw render_markdown(@lesson.content) %>
+              </div>
+
+              <!-- 底部操作区 -->
+              <div class="mt-8 pt-6 border-t border-border flex items-center justify-between">
+                <!-- 上一节/下一节 -->
+                <div class="flex gap-3">
+                  <% if @prev_lesson %>
+                    <%= link_to lesson_path(@prev_lesson), class: "btn-ghost flex items-center gap-2" do %>
+                      <%= lucide_icon "chevron-left", class: "w-5 h-5" %>
+                      <span>上一节</span>
+                    <% end %>
+                  <% end %>
+                  
+                  <% if @next_lesson %>
+                    <%= link_to lesson_path(@next_lesson), class: "btn-ghost flex items-center gap-2" do %>
+                      <span>下一节</span>
+                      <%= lucide_icon "chevron-right", class: "w-5 h-5" %>
+                    <% end %>
+                  <% end %>
+                </div>
+
+                <!-- 去完成作业按钮 -->
+                <button data-action="click->lesson-card#flipToHomework"
+                        class="btn-primary btn-lg flex items-center gap-2 shadow-lg hover:shadow-xl transition-all">
+                  <%= lucide_icon "edit", class: "w-5 h-5" %>
+                  <span>去完成作业</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 背面: 作业提交 -->
+          <div data-lesson-card-target="back"
+               class="absolute inset-0 backface-hidden"
+               style="backface-visibility: hidden; transform: rotateY(180deg);">
+            
+            <div class="card-elevated p-8 rounded-2xl h-full flex flex-col">
+              <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-foreground">课程作业</h2>
+                <button data-action="click->lesson-card#flipToLesson"
+                        class="btn-ghost flex items-center gap-2">
+                  <%= lucide_icon "arrow-left", class: "w-5 h-5" %>
+                  <span>返回学习</span>
+                </button>
+              </div>
+
+              <% if @homework %>
+                <!-- 已提交的作业 -->
+                <div class="alert-success mb-6 flex items-start gap-3">
+                  <%= lucide_icon "check-circle", class: "w-5 h-5 shrink-0 mt-0.5" %>
+                  <div class="flex-1">
+                    <p class="font-semibold mb-1">作业已提交</p>
+                    <p class="text-sm">提交时间: <%= @homework.created_at.strftime('%Y-%m-%d %H:%M') %></p>
+                    <% if @homework.liked? %>
+                      <p class="text-sm text-warning mt-2 flex items-center gap-2">
+                        <%= lucide_icon "heart", class: "w-4 h-4" %>
+                        导师已点赞 · <%= @homework.liked_at.strftime('%Y-%m-%d %H:%M') %>
+                      </p>
+                    <% end %>
+                  </div>
+                </div>
+
+                <div class="card bg-surface-elevated p-6 rounded-xl flex-1 overflow-y-auto">
+                  <p class="text-secondary whitespace-pre-wrap"><%= @homework.content %></p>
+                </div>
+              <% else %>
+                <!-- 作业提交表单 -->
+                <div class="mb-4">
+                  <p class="text-secondary leading-relaxed">
+                    <%= @lesson.name %> 的学习心得与实战结果:
+                  </p>
+                  <p class="text-sm text-muted mt-2">
+                    请详细描述你的学习收获、遇到的问题以及解决方案。(至少10字)
+                  </p>
+                </div>
+
+                <%= form_with url: submit_homework_lesson_path(@lesson), method: :post, class: "flex-1 flex flex-col" do |f| %>
+                  <%= f.text_area :homework_content, 
+                      data: { 
+                        lesson_card_target: "homeworkTextarea",
+                        action: "input->lesson-card#validateHomework"
+                      },
+                      placeholder: "在这里输入你的作业内容...\n\n可以包括:\n- 本节课的核心要点\n- 你的理解和思考\n- 实际应用场景\n- 遇到的问题和解决方法",
+                      class: "form-textarea flex-1 min-h-[300px] resize-none",
+                      required: true,
+                      minlength: 10 %>
+
+                  <div class="mt-6 flex items-center justify-between">
+                    <p class="text-sm text-muted">
+                      <%= lucide_icon "info", class: "w-4 h-4 inline mr-1" %>
+                      提交后将自动标记本节课为已完成
+                    </p>
+
+                    <%= f.submit "提交作业", 
+                        data: { lesson_card_target: "submitButton" },
+                        class: "btn-primary btn-lg opacity-50",
+                        disabled: true %>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- 添加翻转卡片CSS -->
+<style>
+  .backface-hidden {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+</style>

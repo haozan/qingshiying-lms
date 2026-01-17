@@ -1,0 +1,126 @@
+<% content_for :title, "订阅 #{@course.name}" %>
+
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
+  <div class="container-lg">
+    <div class="max-w-2xl mx-auto">
+      <!-- Back Link -->
+      <%= link_to @course, class: "btn-ghost btn-sm mb-6 inline-flex" do %>
+        <%= lucide_icon "arrow-left", class: "w-4 h-4 mr-2" %>
+        返回课程
+      <% end %>
+
+      <!-- Course Card -->
+      <div class="card mb-6">
+        <div class="h-32 bg-gradient-to-br <%= course_gradient_class(@course) %> flex items-center justify-center">
+          <%= lucide_icon course_icon(@course), class: "w-16 h-16 text-white" %>
+        </div>
+        <div class="card-body">
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50 mb-2"><%= @course.name %></h1>
+          <p class="text-gray-600 dark:text-gray-400"><%= @course.description %></p>
+          
+          <div class="mt-4 flex items-center gap-4">
+            <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+              <%= lucide_icon "book-open", class: "w-4 h-4" %>
+              <span><%= @course.lessons.count %> 个课时</span>
+            </div>
+            <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+              <%= lucide_icon "layers", class: "w-4 h-4" %>
+              <span><%= @course.chapters.count %> 个章节</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Existing Subscription Alert -->
+      <% if @existing_subscription %>
+        <div class="alert alert-warning mb-6">
+          <%= lucide_icon "alert-circle", class: "w-5 h-5" %>
+          <div>
+            <div class="font-bold">您已订阅此课程</div>
+            <div class="text-sm">
+              <% if @existing_subscription.payment_type == 'buyout' %>
+                买断模式,永久有效
+              <% elsif @existing_subscription.active? %>
+                有效期至 <%= @existing_subscription.expires_at.strftime('%Y-%m-%d') %>
+              <% else %>
+                订阅已过期,可以续费
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Purchase Confirmation -->
+      <div class="card border-2 border-primary/20">
+        <div class="card-body">
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-50 mb-6 flex items-center gap-2">
+            <%= lucide_icon "credit-card", class: "w-6 h-6 text-primary" %>
+            确认订阅
+          </h2>
+
+          <div class="space-y-4 mb-6">
+            <div class="flex justify-between items-center pb-4 border-b border-gray-200 dark:border-gray-700">
+              <span class="text-gray-600 dark:text-gray-400">课程</span>
+              <span class="font-medium text-gray-900 dark:text-gray-50"><%= @course.name %></span>
+            </div>
+
+            <div class="flex justify-between items-center pb-4 border-b border-gray-200 dark:border-gray-700">
+              <span class="text-gray-600 dark:text-gray-400">订阅类型</span>
+              <% if @payment_type == 'buyout' %>
+                <span class="badge badge-success">买断制 - 永久访问</span>
+              <% else %>
+                <span class="badge badge-info">年订阅 - 365天</span>
+              <% end %>
+            </div>
+
+            <div class="flex justify-between items-center pb-4 border-b border-gray-200 dark:border-gray-700">
+              <span class="text-gray-600 dark:text-gray-400">支付方式</span>
+              <span class="font-medium text-gray-900 dark:text-gray-50">Stripe 安全支付</span>
+            </div>
+
+            <div class="flex justify-between items-center pt-2">
+              <span class="text-xl font-bold text-gray-900 dark:text-gray-50">总计</span>
+              <span class="text-3xl font-bold text-primary">¥<%= sprintf('%.2f', @price) %></span>
+            </div>
+          </div>
+
+          <%= form_with url: subscriptions_path(course_id: @course.id, payment_type: @payment_type), method: :post, class: "space-y-4" do |f| %>
+            <%= f.hidden_field :course_id, value: @course.id %>
+            <%= f.hidden_field :payment_type, value: @payment_type %>
+            
+            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+              <div class="flex gap-3">
+                <%= lucide_icon "info", class: "w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" %>
+                <div class="text-sm text-blue-700 dark:text-blue-300">
+                  <p class="font-medium mb-1">支付说明</p>
+                  <ul class="list-disc list-inside space-y-1">
+                    <% if @payment_type == 'buyout' %>
+                      <li>买断后可永久访问所有课程内容</li>
+                      <li>包含所有未来更新和新增课时</li>
+                    <% else %>
+                      <li>订阅有效期为365天</li>
+                      <li>续费时会在原有效期基础上顺延叠加</li>
+                      <li>过期后仍可查看已学内容,但无法学习新课时</li>
+                    <% end %>
+                    <li>点击下方按钮将跳转到 Stripe 安全支付页面</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <%= link_to "取消", @course, class: "btn-ghost flex-1" %>
+              <%= f.submit "前往支付", class: "btn-primary flex-1" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Security Badge -->
+      <div class="mt-6 text-center text-sm text-gray-500 dark:text-gray-400 flex items-center justify-center gap-2">
+        <%= lucide_icon "shield-check", class: "w-4 h-4" %>
+        <span>Stripe 提供安全加密支付保障</span>
+      </div>
+    </div>
+  </div>
+</div>
