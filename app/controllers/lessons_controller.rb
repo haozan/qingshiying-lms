@@ -1,7 +1,7 @@
 class LessonsController < ApplicationController
   before_action :authenticate_user!
   before_action :find_lesson
-  before_action :check_access!
+  # 移除 check_access! - 允许用户进入页面查看锁定状态
 
   def show
     @full_render = true  # 隐藏导航栏，让学习页面占据全屏
@@ -9,12 +9,26 @@ class LessonsController < ApplicationController
     @chapter = @lesson.chapter
     @chapters = @course.chapters.ordered.includes(:lessons)
     
-    # 获取或创建进度记录
-    @progress = current_user.progresses.find_or_create_by(lesson: @lesson)
-    @progress.update(status: 'in_progress') if @progress.status == 'pending'
+    # 检查用户是否有访问权限
+    @has_access = @lesson.free? || current_user.has_access_to?(@course)
     
-    # 获取作业(如果有)
-    @homework = current_user.homeworks.find_by(lesson: @lesson)
+    # 计算课程进度
+    @total_lessons = @course.lessons.count
+    @completed_lessons = current_user.progresses.joins(:lesson)
+                                      .where(lessons: { chapter_id: @course.chapters.pluck(:id) })
+                                      .where(status: 'completed')
+                                      .count
+    @progress_percentage = @total_lessons > 0 ? (@completed_lessons.to_f / @total_lessons * 100).round : 0
+    
+    # 只有有权限的用户才创建进度记录
+    if @has_access
+      # 获取或创建进度记录
+      @progress = current_user.progresses.find_or_create_by(lesson: @lesson)
+      @progress.update(status: 'in_progress') if @progress.status == 'pending'
+      
+      # 获取作业(如果有)
+      @homework = current_user.homeworks.find_by(lesson: @lesson)
+    end
     
     # 获取当前课节的上一节和下一节
     @prev_lesson = find_prev_lesson
@@ -43,18 +57,6 @@ class LessonsController < ApplicationController
 
   def find_lesson
     @lesson = Lesson.friendly.find(params[:id])
-  end
-
-  def check_access!
-    course = @lesson.chapter.course
-    
-    # 免费课程可以访问
-    return if @lesson.free?
-    
-    # 检查用户是否有课程权限
-    unless current_user.has_access_to?(course)
-      redirect_to courses_path, alert: '请先订阅该课程'
-    end
   end
 
   def find_prev_lesson

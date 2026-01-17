@@ -17,6 +17,11 @@ export default class extends Controller<HTMLElement> {
 
   connect(): void {
     console.log("LessonCard controller connected")
+    
+    // 如果已有作业内容，初始化时验证一次
+    if (this.hasHomeworkTextareaTarget && this.hasSubmitButtonTarget) {
+      this.validateHomework()
+    }
   }
 
   // 翻转到作业面

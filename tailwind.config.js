@@ -40,6 +40,11 @@ module.exports = {
           light: 'hsl(var(--color-secondary-light) / <alpha-value>)',
           dark: 'hsl(var(--color-secondary-dark) / <alpha-value>)',
         },
+        accent: {
+          DEFAULT: 'hsl(var(--color-accent) / <alpha-value>)',
+          light: 'hsl(var(--color-accent-light) / <alpha-value>)',
+          dark: 'hsl(var(--color-accent-dark) / <alpha-value>)',
+        },
         background: {
           DEFAULT: 'hsl(var(--color-surface) / <alpha-value>)',
         },

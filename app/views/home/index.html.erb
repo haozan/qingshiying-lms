@@ -2,11 +2,22 @@
   <!-- Hero Section -->
   <div class="mx-auto max-w-7xl px-6 pt-10 pb-12 sm:pt-16 lg:px-8">
     <div class="mx-auto max-w-2xl text-center">
-      <h1 class="text-4xl font-bold tracking-tight text-base-content sm:text-6xl bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-        青狮营 - AI驱动的学习平台
+      <h1 class="text-4xl font-bold tracking-tight sm:text-6xl">
+        <!-- Desktop: single line with comma -->
+        <span class="hidden sm:inline">
+          <span class="text-primary">AI 时代，开启</span><span class="bg-accent text-primary px-2 py-1">极速蜕变</span>
+        </span>
+        
+        <!-- Mobile: two lines without comma -->
+        <span class="sm:hidden">
+          <span class="text-primary block">AI 时代</span>
+          <span class="block mt-4">
+            <span class="text-primary">开启</span><span class="bg-accent text-primary px-2 py-1">极速蜕变</span>
+          </span>
+        </span>
       </h1>
       <p class="mt-6 text-lg leading-8 text-base-content/80">
-        通过专业课程体系，帮助你掌握AI应用、写作运营和AI编程技能。与千万学习者一起，开启成长之旅。
+        为律师量身定制
       </p>
       <div class="mt-10 flex items-center justify-center gap-x-6">
         <% if current_user %>
@@ -14,8 +25,13 @@
           <%= link_to "我的进度", dashboard_progresses_path, class: "btn-secondary" %>
         <% else %>
           <%= link_to "立即注册", sign_up_path, class: "btn-primary" %>
-          <%= link_to "课程介绍", courses_path, class: "btn-secondary" %>
+          <%= link_to "浏览课程", courses_path, class: "btn-secondary" %>
         <% end %>
+      </div>
+      
+      <!-- Hero Illustration -->
+      <div class="mt-16 flex items-center justify-center">
+        <%= image_tag "hero-illustration-new.png", alt: "AI学习平台", class: "w-full" %>
       </div>
     </div>
   </div>

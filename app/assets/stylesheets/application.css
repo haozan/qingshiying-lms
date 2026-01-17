@@ -40,14 +40,18 @@
    * Use semantic variables only for maintainability and theme consistency.
    */
   :root {
-    /* 青狮营品牌色 - 知识的蓝绿渐变主题 */
-    --color-primary: 195 85% 45%;      /* 专注学习的深海蓝 */
-    --color-primary-light: 195 90% 55%; /* 清新的学习氛围 */
-    --color-primary-dark: 195 75% 35%;  /* 沉稳的知识底蕴 */
+    /* 青狮营品牌色 - 深空科技主题 */
+    --color-primary: 249 32% 17%;      /* 深紫蓝 #201e36 - 神秘科技感 */
+    --color-primary-light: 249 32% 27%; /* 稍亮变体 */
+    --color-primary-dark: 249 32% 12%;  /* 更深变体 */
 
-    --color-secondary: 142 70% 45%;     /* 成长的翠绿色 */
-    --color-secondary-light: 142 75% 65%;
-    --color-secondary-dark: 142 65% 35%;
+    --color-secondary: 178 55% 47%;     /* 青绿 #39b6ae - 科技活力 */
+    --color-secondary-light: 178 55% 60%;
+    --color-secondary-dark: 178 55% 37%;
+
+    --color-accent: 56 99% 50%;         /* 电光黄 #fef100 - 高光点缀 */
+    --color-accent-light: 56 99% 60%;
+    --color-accent-dark: 56 99% 40%;
 
     /* Text colors - high contrast for readability */
     --color-text-primary: 0 0% 15%;    /* Main headings, important text */
@@ -62,10 +66,10 @@
     /*  Neutral color - use only in special cases, avoid for text */
     --color-neutral: 0 0% 64%;
 
-    --color-success: 142 76% 42%;      /* 学习成就达成 */
-    --color-warning: 38 92% 55%;        /* 作业提醒 */
-    --color-danger: 0 84% 62%;          /* 重要通知 */
-    --color-info: 210 90% 50%;          /* 课程信息 */
+    --color-success: 178 55% 47%;      /* 使用辅色 - 成功状态 */
+    --color-warning: 56 99% 50%;        /* 使用点缀色 - 警告提醒 */
+    --color-danger: 0 84% 62%;          /* 保持原红色 - 危险警告 */
+    --color-info: 178 55% 60%;          /* 辅色亮变体 - 信息提示 */
 
     --color-success-bg: 138 76% 97%;
     --color-warning-bg: 48 100% 96%;
@@ -75,11 +79,11 @@
     --font-family-sans: 'Inter', 'Helvetica Neue', 'Arial', sans-serif;
     --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
 
-    --border-radius-sm: 0.375rem;
-    --border-radius: 0.5rem;
-    --border-radius-md: 0.75rem;
-    --border-radius-lg: 1rem;
-    --border-radius-xl: 1.5rem;
+    --border-radius-sm: 0rem;
+    --border-radius: 0rem;
+    --border-radius-md: 0rem;
+    --border-radius-lg: 0rem;
+    --border-radius-xl: 0rem;
 
     --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
@@ -94,14 +98,18 @@
    * Follows WCAG AA standards with minimum 4.5:1 text contrast ratio
    */
   .dark {
-    /* 暗黑模式下的青狮营品牌色 - 护眼的深色学习环境 */
-    --color-primary: 195 75% 60%;      /* 暗黑下的海蓝 */
-    --color-primary-light: 195 80% 70%;
-    --color-primary-dark: 195 70% 50%;
+    /* 暗黑模式下的青狮营品牌色 - 深空科技主题增强 */
+    --color-primary: 249 32% 25%;      /* 暗黑下稍亮的深紫蓝 */
+    --color-primary-light: 249 32% 35%;
+    --color-primary-dark: 249 32% 15%;
 
-    --color-secondary: 142 60% 55%;    /* 暗黑下的成长绿 */
-    --color-secondary-light: 142 65% 70%;
-    --color-secondary-dark: 142 55% 45%;
+    --color-secondary: 178 55% 55%;    /* 暗黑下更亮的青绿 */
+    --color-secondary-light: 178 55% 70%;
+    --color-secondary-dark: 178 55% 45%;
+
+    --color-accent: 56 99% 60%;         /* 暗黑下更亮的电光黄 */
+    --color-accent-light: 56 99% 70%;
+    --color-accent-dark: 56 99% 50%;
 
     /* Text colors - high contrast for readability */
     --color-text-primary: 0 0% 95%;    /* Near white, optimal contrast */
@@ -114,10 +122,10 @@
     --color-border: 0 0% 20%;          /* Borders, adequate contrast */
 
     /* Status colors optimization for dark mode - brighter and more saturated */
-    --color-success: 145 80% 50%;      /* Brighter green */
-    --color-warning: 45 95% 60%;       /* Brighter yellow */
-    --color-danger: 0 85% 65%;         /* Brighter red */
-    --color-info: 200 95% 55%;         /* Brighter blue */
+    --color-success: 178 55% 60%;      /* 使用辅色亮变体 */
+    --color-warning: 56 99% 65%;       /* 使用点缀色亮变体 */
+    --color-danger: 0 85% 65%;         /* 保持原红色 */
+    --color-info: 178 55% 70%;         /* 辅色更亮变体 */
 
     /* Status background colors - semi-transparent for dark mode */
     --color-success-bg: 145 80% 50% / 0.15; /* Semi-transparent green background */
@@ -138,6 +146,38 @@
   }
 
   /* Add your custom components here */
+
+  /* 修复 badge-warning 可读性 - 黄色背景上使用深色文字 */
+  .badge-warning {
+    color: hsl(var(--color-text-primary)) !important;
+  }
+
+  .dark .badge-warning {
+    color: hsl(var(--color-text-primary)) !important;
+  }
+
+  /* 全局取消圆角 - 覆盖所有 Tailwind 圆角类 */
+  .rounded,
+  .rounded-sm,
+  .rounded-md,
+  .rounded-lg,
+  .rounded-xl,
+  .rounded-2xl,
+  .rounded-3xl,
+  .rounded-full {
+    border-radius: 0 !important;
+  }
+
+  /* 保留进度条等需要圆角的特殊元素 */
+  .badge,
+  .badge-primary,
+  .badge-secondary,
+  .badge-success,
+  .badge-warning,
+  .badge-danger,
+  .badge-neutral {
+    border-radius: 0 !important;
+  }
 
 } /* End of @layer components */
 
