@@ -45,6 +45,6 @@ class Admin::OfflineSchedulesController < Admin::BaseController
   end
 
   def offline_schedule_params
-    params.require(:offline_schedule).permit(:schedule_date, :max_attendees, :status, :course_id)
+    params.require(:offline_schedule).permit(:schedule_date, :schedule_time, :location, :max_attendees, :status)
   end
 end

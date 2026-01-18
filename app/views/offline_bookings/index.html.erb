@@ -1,0 +1,200 @@
+<div class="min-h-screen bg-surface">
+  <div class="pt-28 pb-16">
+    <div class="container-xl mx-auto px-6">
+      <!-- Page Header -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-foreground mb-4">线下预约</h1>
+        <p class="text-lg text-secondary">选择合适的时间预约线下面授</p>
+      </div>
+
+      <!-- User Eligibility Status -->
+      <div class="max-w-4xl mx-auto mb-8">
+        <% if @eligible %>
+          <div class="alert-success">
+            <%= lucide_icon "check-circle", class: "w-5 h-5" %>
+            <div>
+              <p class="font-medium">您具有线下预约资格</p>
+              <p class="text-sm">预约资格有效期至: <%= @expires_at.strftime('%Y年%m月%d日') %>（基于您最后购买的课程日期）</p>
+            </div>
+          </div>
+        <% else %>
+          <div class="alert-warning">
+            <%= lucide_icon "alert-triangle", class: "w-5 h-5" %>
+            <div>
+              <p class="font-medium">您当前没有线下预约资格</p>
+              <p class="text-sm">购买任意课程后即可获得一年的线下预约资格（购买多门课程的，按最后一门课程购买日期起算）</p>
+              <%= link_to "查看课程", courses_path, class: "btn-primary mt-2 inline-block" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- My Bookings -->
+      <% if @my_bookings.any? %>
+        <div class="max-w-4xl mx-auto mb-12">
+          <h2 class="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+            <%= lucide_icon "calendar-check", class: "w-6 h-6" %>
+            我的预约
+          </h2>
+          
+          <div class="space-y-4">
+            <% @my_bookings.each do |booking| %>
+              <div class="card-elevated">
+                <div class="card-body">
+                  <div class="flex items-center justify-between">
+                    <div class="flex-1">
+                      <div class="space-y-1 text-sm text-secondary">
+                        <div class="flex items-center gap-2">
+                          <%= lucide_icon "calendar", class: "w-4 h-4" %>
+                          <span><%= booking.offline_schedule.schedule_date.strftime('%Y年%m月%d日') %></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <%= lucide_icon "clock", class: "w-4 h-4" %>
+                          <span><%= booking.offline_schedule.schedule_time %></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <%= lucide_icon "map-pin", class: "w-4 h-4" %>
+                          <span><%= booking.offline_schedule.location %></span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <%= link_to offline_booking_path(booking), method: :delete,
+                          data: { confirm: "确定要取消此预约吗？" },
+                          class: "btn-outline text-red-600 hover:bg-red-50" do %>
+                        <%= lucide_icon "x", class: "w-4 h-4 mr-1" %>
+                        取消预约
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Available Schedules -->
+      <div class="max-w-4xl mx-auto" data-controller="view-toggle">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-foreground flex items-center gap-2">
+            <%= lucide_icon "calendar", class: "w-6 h-6" %>
+            可预约时段
+          </h2>
+          
+          <!-- View Toggle -->
+          <div class="flex gap-2 bg-surface rounded-lg p-1">
+            <button type="button"
+                    data-view-toggle-target="button"
+                    data-view="list"
+                    data-action="click->view-toggle#switch"
+                    class="px-4 py-2 rounded-md text-sm font-medium transition-colors text-secondary hover:text-foreground">
+              <%= lucide_icon "list", class: "w-4 h-4 inline-block mr-1" %>
+              列表视图
+            </button>
+            <button type="button"
+                    data-view-toggle-target="button"
+                    data-view="calendar"
+                    data-action="click->view-toggle#switch"
+                    class="px-4 py-2 rounded-md text-sm font-medium transition-colors bg-primary text-white">
+              <%= lucide_icon "calendar", class: "w-4 h-4 inline-block mr-1" %>
+              日历视图
+            </button>
+          </div>
+        </div>
+
+        <% if @schedules.any? %>
+          <!-- List View -->
+          <div data-view-toggle-target="content" data-view="list" class="hidden">
+            <div class="space-y-4">
+              <% @schedules.each do |schedule| %>
+                <% already_booked = current_user&.offline_bookings&.confirmed&.exists?(offline_schedule_id: schedule.id) %>
+                <div class="card-elevated">
+                  <div class="card-body">
+                    <div class="flex items-center justify-between p-4">
+                      <div class="flex-1">
+                        <div class="flex items-center gap-4 mb-2">
+                          <div class="flex items-center gap-2 text-foreground font-medium">
+                            <%= lucide_icon "calendar", class: "w-4 h-4" %>
+                            <%= schedule.schedule_date.strftime('%Y年%m月%d日') %>
+                          </div>
+                          <div class="flex items-center gap-2 text-secondary">
+                            <%= lucide_icon "clock", class: "w-4 h-4" %>
+                            <%= schedule.schedule_time %>
+                          </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-muted">
+                          <%= lucide_icon "map-pin", class: "w-4 h-4" %>
+                          <%= schedule.location %>
+                        </div>
+                        <div class="mt-2 text-sm text-secondary">
+                          剩余名额: <%= schedule.max_attendees - schedule.current_attendees %> / <%= schedule.max_attendees %>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <% if already_booked %>
+                          <span class="badge-success">已预约</span>
+                        <% elsif !@eligible %>
+                          <span class="badge badge-gray">需要购买课程</span>
+                        <% elsif !schedule.bookable? %>
+                          <span class="badge badge-gray">已满员</span>
+                        <% else %>
+                          <%= link_to "立即预约", offline_bookings_path(offline_schedule_id: schedule.id), 
+                              method: :post,
+                              data: { confirm: "确定要预约此时段吗？" },
+                              class: "btn-primary" %>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- Calendar View -->
+          <div data-view-toggle-target="content" data-view="calendar">
+            <% 
+              schedules_json = @schedules.map do |schedule|
+                already_booked = current_user&.offline_bookings&.confirmed&.exists?(offline_schedule_id: schedule.id)
+                {
+                  id: schedule.id,
+                  date: schedule.schedule_date.strftime('%Y-%m-%d'),
+                  time: schedule.schedule_time,
+                  location: schedule.location,
+                  max_attendees: schedule.max_attendees,
+                  remaining: schedule.max_attendees - schedule.current_attendees,
+                  bookable: schedule.bookable?,
+                  already_booked: already_booked
+                }
+              end
+            %>
+            <div data-controller="calendar-view"
+                 data-calendar-view-schedules-value='<%= schedules_json.to_json %>'
+                 data-calendar-view-eligible-value="<%= @eligible %>">
+              <!-- Calendar Grid -->
+              <div class="card-elevated mb-6">
+                <div class="card-body">
+                  <div data-calendar-view-target="calendar"></div>
+                </div>
+              </div>
+              
+              <!-- Schedule List for Selected Date -->
+              <div data-calendar-view-target="scheduleList"></div>
+            </div>
+          </div>
+        <% else %>
+          <div class="card-elevated">
+            <div class="card-body text-center py-12">
+              <%= lucide_icon "calendar-off", class: "w-16 h-16 mx-auto mb-4 text-gray-400" %>
+              <h3 class="text-lg font-medium text-foreground mb-2">暂无可预约时段</h3>
+              <p class="text-secondary">请稍后再来查看</p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

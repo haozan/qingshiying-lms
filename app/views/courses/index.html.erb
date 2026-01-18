@@ -52,11 +52,10 @@
                   <%= lucide_icon course_icon(course), class: "w-6 h-6 text-surface" %>
                 </div>
                 
-                <% if course.buyout? %>
-                  <span class="badge-success text-xs">买断制</span>
-                <% else %>
-                  <span class="badge-warning text-xs">年订阅</span>
-                <% end %>
+                <div class="flex flex-col gap-1">
+                  <span class="badge-warning text-xs">整年更新</span>
+                  <span class="badge-success text-xs">支持线下</span>
+                </div>
               </div>
             </div>
 

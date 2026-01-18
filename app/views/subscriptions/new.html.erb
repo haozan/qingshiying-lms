@@ -38,12 +38,10 @@
           <div>
             <div class="font-bold">您已订阅此课程</div>
             <div class="text-sm">
-              <% if @existing_subscription.payment_type == 'buyout' %>
-                买断模式,永久有效
-              <% elsif @existing_subscription.active? %>
-                有效期至 <%= @existing_subscription.expires_at.strftime('%Y-%m-%d') %>
+              <% if @existing_subscription.active? %>
+                课程内容永久查阅，线下预约资格至 <%= (@existing_subscription.started_at + 1.year).strftime('%Y-%m-%d') %>
               <% else %>
-                订阅已过期,可以续费
+                订阅已过期，可以续费
               <% end %>
             </div>
           </div>
@@ -66,11 +64,10 @@
 
             <div class="flex justify-between items-center pb-4 border-b border-gray-200 dark:border-gray-700">
               <span class="text-gray-600 dark:text-gray-400">订阅类型</span>
-              <% if @payment_type == 'buyout' %>
-                <span class="badge badge-success">买断制 - 永久访问</span>
-              <% else %>
-                <span class="badge badge-info">年订阅 - 365天</span>
-              <% end %>
+              <div class="text-right">
+                <div class="font-medium text-gray-900 dark:text-gray-50">课程内容永久查阅</div>
+                <div class="text-xs text-gray-500">一年内可预约线下面授</div>
+              </div>
             </div>
 
             <div class="flex justify-between items-center pb-4 border-b border-gray-200 dark:border-gray-700">
@@ -80,13 +77,22 @@
 
             <div class="flex justify-between items-center pt-2">
               <span class="text-xl font-bold text-gray-900 dark:text-gray-50">总计</span>
-              <span class="text-3xl font-bold text-primary">¥<%= sprintf('%.2f', @price) %></span>
+              <div class="text-right">
+                <% if @course.buyout_price.present? && @course.buyout_price > @course.annual_price %>
+                  <div class="text-sm text-gray-500 line-through mb-1">¥<%= sprintf('%.0f', @course.buyout_price) %></div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-3xl font-bold text-primary">¥<%= sprintf('%.0f', @price) %></span>
+                    <span class="badge-warning text-xs">特惠</span>
+                  </div>
+                <% else %>
+                  <span class="text-3xl font-bold text-primary">¥<%= sprintf('%.2f', @price) %></span>
+                <% end %>
+              </div>
             </div>
           </div>
 
-          <%= form_with url: subscriptions_path(course_id: @course.id, payment_type: @payment_type), method: :post, class: "space-y-4" do |f| %>
+          <%= form_with url: subscriptions_path(course_id: @course.id), method: :post, class: "space-y-4" do |f| %>
             <%= f.hidden_field :course_id, value: @course.id %>
-            <%= f.hidden_field :payment_type, value: @payment_type %>
             
             <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
               <div class="flex gap-3">
@@ -94,14 +100,9 @@
                 <div class="text-sm text-blue-700 dark:text-blue-300">
                   <p class="font-medium mb-1">支付说明</p>
                   <ul class="list-disc list-inside space-y-1">
-                    <% if @payment_type == 'buyout' %>
-                      <li>买断后可永久访问所有课程内容</li>
-                      <li>包含所有未来更新和新增课时</li>
-                    <% else %>
-                      <li>订阅有效期为365天</li>
-                      <li>续费时会在原有效期基础上顺延叠加</li>
-                      <li>过期后仍可查看已学内容,但无法学习新课时</li>
-                    <% end %>
+                    <li>购买后可永久查阅所有课程内容</li>
+                    <li>一年内可预约线下面授（后续开放）</li>
+                    <li>包含所有未来更新和新增课时</li>
                     <li>点击下方按钮将跳转到 Stripe 安全支付页面</li>
                   </ul>
                 </div>

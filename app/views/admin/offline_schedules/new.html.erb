@@ -16,27 +16,33 @@
       <%= form_with model: [:admin, @offline_schedule], local: true, class: "space-y-6" do |form| %>
         <!-- Schedule date -->
         <div class="form-group">
-          <%= form.label :schedule_date %>
-          <%= form.date_field :schedule_date, placeholder: "Select schedule date..." %>
+          <%= form.label :schedule_date, "预约日期" %>
+          <%= form.date_field :schedule_date, placeholder: "选择预约日期..." %>
+        </div>
+
+        <!-- Schedule time -->
+        <div class="form-group">
+          <%= form.label :schedule_time, "预约时间段" %>
+          <%= form.text_field :schedule_time, placeholder: "例如: 14:00-16:00" %>
+        </div>
+
+        <!-- Location -->
+        <div class="form-group">
+          <%= form.label :location, "预约地点" %>
+          <%= form.text_field :location, placeholder: "输入预约地点..." %>
         </div>
 
         <!-- Max attendees -->
         <div class="form-group">
-          <%= form.label :max_attendees %>
-          <%= form.number_field :max_attendees, placeholder: "Enter max attendees..." %>
+          <%= form.label :max_attendees, "最大参加人数" %>
+          <%= form.number_field :max_attendees, placeholder: "输入最大参加人数...", value: @offline_schedule.max_attendees || 20 %>
         </div>
 
         <!-- Status -->
         <div class="form-group">
-          <%= form.label :status %>
-          <%= form.text_field :status, placeholder: "Enter status..." %>
-        </div>
-
-        <!-- Course -->
-        <div class="form-group">
-          <%= form.label :course_id, "Course" %>
-          <%= form.select :course_id,
-              options_for_select([['Select Course', '']] + Course.all.map { |item| [item.name, item.id] }, @offline_schedule.course_id) %>
+          <%= form.label :status, "状态" %>
+          <%= form.select :status,
+              options_for_select([['可预约', 'available'], ['已满员', 'full'], ['已取消', 'cancelled']], @offline_schedule.status || 'available') %>
         </div>
 
         <!-- Form Actions -->

@@ -284,18 +284,11 @@ class StripePaymentService < ApplicationService
     when 'Subscription'
       subscription = payment.payable
       
-      # 激活订阅
-      if subscription.payment_type == 'buyout'
-        # 买断制:永久有效,不设置过期时间
-        subscription.update!(
-          status: 'active',
-          started_at: Time.current,
-          expires_at: nil
-        )
-      else
-        # 年订阅:顶延叠加
-        subscription.renew!(365)
-      end
+      # 激活订阅（统一模型：永久内容+一年线下）
+      subscription.update!(
+        status: 'active',
+        started_at: Time.current
+      )
       
       Rails.logger.info "订阅激活: #{subscription.course.name} (用户: #{subscription.user.email})"
       

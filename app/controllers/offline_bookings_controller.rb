@@ -1,37 +1,40 @@
 class OfflineBookingsController < ApplicationController
-  before_action :authenticate_user!
-  before_action :check_ai_programming_access
+  before_action :authenticate_user!, except: [:index]
+  before_action :check_offline_booking_eligible, only: [:create]
 
   def index
-    @bookings = current_user.offline_bookings.includes(offline_schedule: :course).order(created_at: :desc)
-    @upcoming_bookings = @bookings.confirmed.joins(:offline_schedule).where('offline_schedules.schedule_date >= ?', Date.today)
-  end
-
-  def new
-    @schedule = OfflineSchedule.find(params[:schedule_id])
-    @booking = current_user.offline_bookings.new(offline_schedule: @schedule)
+    @schedules = OfflineSchedule.available.includes(:course, :offline_bookings).order(schedule_date: :asc, schedule_time: :asc)
     
-    unless @schedule.bookable?
-      redirect_to course_path(@schedule.course), alert: '该场次不可预约'
+    if current_user
+      @my_bookings = current_user.offline_bookings.confirmed.includes(offline_schedule: [:course]).order(created_at: :desc)
+      @eligible = current_user.offline_booking_eligible?
+      @expires_at = current_user.offline_booking_expires_at
+    else
+      @my_bookings = []
+      @eligible = false
+      @expires_at = nil
     end
   end
 
   def create
     @schedule = OfflineSchedule.find(params[:offline_schedule_id])
+    
+    unless @schedule.bookable?
+      redirect_to offline_bookings_path, alert: '该场次不可预约' and return
+    end
+    
     @booking = current_user.offline_bookings.new(
       offline_schedule: @schedule,
       status: 'confirmed'
     )
     
-    if @schedule.bookable? && @booking.save
-      # 检查是否已满
+    if @booking.save
       if @schedule.full?
         @schedule.update!(status: 'full')
       end
-      
       redirect_to offline_bookings_path, notice: '预约成功'
     else
-      redirect_to course_path(@schedule.course), alert: '预约失败,该场次可能已满'
+      redirect_to offline_bookings_path, alert: @booking.errors.full_messages.join(', ')
     end
   end
 
@@ -41,8 +44,7 @@ class OfflineBookingsController < ApplicationController
     
     @booking.cancel!
     
-    # 如果之前是满员,现在恢复 available
-    if @schedule.status == 'full'
+    if @schedule.status == 'full' && !@schedule.full?
       @schedule.update!(status: 'available')
     end
     
@@ -51,12 +53,9 @@ class OfflineBookingsController < ApplicationController
 
   private
   
-  def check_ai_programming_access
-    # 查找 AI编程课
-    ai_programming_course = Course.find_by('name LIKE ?', '%编程%')
-    
-    unless ai_programming_course && current_user.has_access_to?(ai_programming_course)
-      redirect_to courses_path, alert: '仅AI编程课学员可预约线下课'
+  def check_offline_booking_eligible
+    unless current_user.offline_booking_eligible?
+      redirect_to offline_bookings_path, alert: '您当前没有线下预约资格，请先购买任意课程'
     end
   end
 end

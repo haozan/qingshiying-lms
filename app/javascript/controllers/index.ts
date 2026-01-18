@@ -12,6 +12,8 @@ import LessonCardController from "./lesson_card_controller"
 import QiniuPlayerController from "./qiniu_player_controller"
 import SidebarController from "./sidebar_controller"
 import PwaInstallController from "./pwa_install_controller"
+import ViewToggleController from "./view_toggle_controller"
+import CalendarViewController from "./calendar_view_controller"
 
 const application = Application.start()
 
@@ -27,5 +29,7 @@ application.register("lesson-card", LessonCardController)
 application.register("qiniu-player", QiniuPlayerController)
 application.register("sidebar", SidebarController)
 application.register("pwa-install", PwaInstallController)
+application.register("view-toggle", ViewToggleController)
+application.register("calendar-view", CalendarViewController)
 
 window.Stimulus = application

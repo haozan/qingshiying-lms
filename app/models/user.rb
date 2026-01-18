@@ -131,6 +131,27 @@ class User < ApplicationRecord
     }
   end
 
+  # 检查用户是否有线下预约资格
+  # 逻辑：有任一课程订阅，且从最后购买的课程日期起一年内
+  def offline_booking_eligible?
+    return false unless subscriptions.active.any?
+    
+    # 获取最后购买的课程订阅
+    latest_subscription = subscriptions.active.order(started_at: :desc).first
+    return false if latest_subscription.started_at.nil?
+    
+    # 检查是否在一年有效期内
+    Time.current < (latest_subscription.started_at + 1.year)
+  end
+  
+  # 获取线下预约资格到期日期
+  def offline_booking_expires_at
+    latest_subscription = subscriptions.active.order(started_at: :desc).first
+    return nil if latest_subscription.nil? || latest_subscription.started_at.nil?
+    
+    latest_subscription.started_at + 1.year
+  end
+
   # write your own code here
 
 end

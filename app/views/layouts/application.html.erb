@@ -46,7 +46,8 @@
            data-system-monitor-signed-name-value="<%= Turbo::StreamsChannel.signed_stream_name("system_monitor") %>"
            data-turbo-permanent>
       </div>
-    <% end %><script>
+    <% end %><!-- stimulus-validator: allow-script -->
+<script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/service-worker.js')

@@ -3,23 +3,21 @@ class SubscriptionsController < ApplicationController
 
   def new
     @course = Course.friendly.find(params[:course_id])
-    @payment_type = params[:payment_type] # 'annual' or 'buyout'
     
     # 检查是否已经订阅
     @existing_subscription = current_user.subscriptions.find_by(course: @course, status: ['active', 'pending'])
     
-    # 计算价格
-    @price = @payment_type == 'buyout' ? @course.buyout_price : @course.annual_price
+    # 统一价格（永久内容+一年线下）
+    @price = @course.annual_price
   end
 
   def create
     @course = Course.friendly.find(params[:course_id])
-    payment_type = params[:payment_type] # 'annual' or 'buyout'
     
-    # 创建或获取订阅记录
+    # 创建或获取订阅记录（统一为 annual 类型）
     @subscription = current_user.subscriptions.find_or_initialize_by(
       course: @course,
-      payment_type: payment_type
+      payment_type: 'annual'
     )
     
     # 如果已存在且有效,则重定向
@@ -32,8 +30,8 @@ class SubscriptionsController < ApplicationController
     @subscription.status = 'pending'
     @subscription.save!
     
-    # 计算价格
-    amount = payment_type == 'buyout' ? @course.buyout_price : @course.annual_price
+    # 统一价格
+    amount = @course.annual_price
     
     # 创建支付记录
     @payment = @subscription.create_payment!(

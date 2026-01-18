@@ -11,39 +11,31 @@ class Subscription < ApplicationRecord
   scope :active, -> { where(status: 'active') }
   scope :expired, -> { where(status: 'expired') }
 
-  # 检查是否有效
+  # 检查是否有效（内容访问永久有效）
   def active?
+    status == 'active'
+  end
+  
+  # 检查线下预约资格（购买后一年内）
+  def offline_eligible?
     return false unless status == 'active'
+    return false if started_at.nil?
     
-    # 买断制永久有效
-    return true if payment_type == 'buyout'
-    
-    # 订阅制检查过期时间
-    expires_at.nil? || expires_at > Time.current
+    Time.current < (started_at + 1.year)
   end
 
-  # 续费(顺延叠加)
+  # 续费（延长线下预约资格）
   def renew!(days = 365)
-    if expires_at.nil? || expires_at < Time.current
-      # 如果已过期或首次购买,从今天开始计算
-      self.expires_at = Time.current + days.days
-    else
-      # 如果还在有效期内,顺延叠加
-      self.expires_at = expires_at + days.days
-    end
-    
+    # 续费主要延长线下预约资格，内容访问本来就是永久的
+    # 如果已过期或首次购买，从今天开始计算
+    self.started_at = Time.current if started_at.nil?
     self.status = 'active'
-    self.started_at ||= Time.current
     save!
   end
 
-  # 自动检查并更新过期状态
+  # 自动检查并更新过期状态（内容访问不过期，此方法保留但不再使用）
   def check_expiration!
-    return if payment_type == 'buyout' # 买断制不过期
-    
-    if expires_at.present? && expires_at < Time.current
-      update!(status: 'expired')
-    end
+    # 内容访问永久有效，不需要检查过期
   end
 
   # ============== Payment Interface (REQUIRED by Payment model) ==============
@@ -58,7 +50,7 @@ class Subscription < ApplicationRecord
   end
 
   def payment_description
-    "#{course.name} - #{payment_type == 'buyout' ? '买断' : '年订阅'}"
+    "#{course.name} - 课程订阅（永久内容+一年线下）"
   end
 
   # Always use 'payment' mode (one-time checkout, not recurring subscription)
@@ -67,7 +59,7 @@ class Subscription < ApplicationRecord
   end
 
   def stripe_line_items
-    price = payment_type == 'buyout' ? course.buyout_price : course.annual_price
+    price = course.annual_price
     
     [{
       price_data: {

@@ -39,14 +39,15 @@
               <div class="text-center mb-4">
                 <%= lucide_icon "check-circle", class: "w-16 h-16 mx-auto mb-3 text-green-400" %>
                 <h3 class="text-xl font-bold mb-2">已订阅</h3>
-                <% if @subscription.payment_type == 'buyout' %>
-                  <p class="text-white/80 text-sm">买断模式 - 永久有效</p>
-                <% else %>
-                  <p class="text-white/80 text-sm">
-                    有效期至<br/>
-                    <%= @subscription.expires_at.strftime('%Y年%m月%d日') %>
-                  </p>
-                <% end %>
+                <p class="text-white/80 text-sm">
+                  课程内容永久查阅<br/>
+                  <% offline_eligible_until = @subscription.started_at + 1.year %>
+                  <% if Time.current < offline_eligible_until %>
+                    线下面授资格至 <%= offline_eligible_until.strftime('%Y年%m月%d日') %>
+                  <% else %>
+                    线下预约资格已过期
+                  <% end %>
+                </p>
               </div>
               
               <%= link_to "继续学习", @first_lesson || @course.lessons.first, class: "btn-primary w-full mb-2" %>
@@ -55,29 +56,33 @@
               <!-- Subscribe Options -->
               <h3 class="text-xl font-bold mb-4 text-center">开始学习</h3>
               
-              <% if @course.buyout? %>
-                <!-- Buyout Only -->
-                <div class="mb-4 p-4 bg-white/10 rounded-lg text-center">
-                  <div class="text-3xl font-bold mb-1">¥<%= sprintf('%.2f', @course.buyout_price) %></div>
-                  <div class="text-sm text-white/70">买断制 - 永久访问</div>
-                </div>
-                <% if current_user %>
-                  <%= link_to "立即购买", new_subscription_path(course_id: @course.id, payment_type: 'buyout'), class: "btn-primary w-full" %>
+              <div class="mb-4 p-4 bg-white/10 rounded-lg">
+                <% if @course.buyout_price.present? && @course.buyout_price > @course.annual_price %>
+                  <div class="text-center mb-2">
+                    <span class="text-sm text-white/60 line-through">原价 ¥<%= sprintf('%.0f', @course.buyout_price) %></span>
+                  </div>
+                  <div class="text-3xl font-bold mb-2 text-center text-yellow-400">¥<%= sprintf('%.0f', @course.annual_price) %></div>
+                  <div class="text-center mb-3">
+                    <span class="badge-warning text-xs">限时特惠</span>
+                  </div>
                 <% else %>
-                  <%= link_to "登录后购买", sign_in_path, class: "btn-primary w-full" %>
+                  <div class="text-3xl font-bold mb-2 text-center">¥<%= sprintf('%.2f', @course.annual_price) %></div>
                 <% end %>
+                <div class="text-sm text-white/90 space-y-1">
+                  <div class="flex items-center gap-2">
+                    <%= lucide_icon "infinity", class: "w-4 h-4" %>
+                    <span>课程内容永久查阅</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <%= lucide_icon "calendar", class: "w-4 h-4" %>
+                    <span>一年内可预约线下面授</span>
+                  </div>
+                </div>
+              </div>
+              <% if current_user %>
+                <%= link_to "立即购买", new_subscription_path(course_id: @course.id), class: "btn-primary w-full" %>
               <% else %>
-                <!-- Annual Subscription -->
-                <div class="mb-4 p-4 bg-white/10 rounded-lg text-center">
-                  <div class="text-3xl font-bold mb-1">¥<%= sprintf('%.2f', @course.annual_price) %></div>
-                  <div class="text-sm text-white/70">年订阅 - 365天访问权限</div>
-                  <div class="text-xs text-white/60 mt-2">续费时顺延叠加</div>
-                </div>
-                <% if current_user %>
-                  <%= link_to "立即订阅", new_subscription_path(course_id: @course.id, payment_type: 'annual'), class: "btn-primary w-full" %>
-                <% else %>
-                  <%= link_to "登录后订阅", sign_in_path, class: "btn-primary w-full" %>
-                <% end %>
+                <%= link_to "登录后购买", sign_in_path, class: "btn-primary w-full" %>
               <% end %>
               
               <div class="mt-4 text-center text-xs text-white/60">

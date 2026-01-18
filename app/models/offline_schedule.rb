@@ -1,9 +1,11 @@
 class OfflineSchedule < ApplicationRecord
-  belongs_to :course
+  belongs_to :course, optional: true
   has_many :offline_bookings, dependent: :destroy
 
   # Validations
   validates :schedule_date, presence: true
+  validates :schedule_time, presence: true
+  validates :location, presence: true
   validates :status, presence: true, inclusion: { in: %w[available full cancelled] }
   validates :max_attendees, numericality: { only_integer: true, greater_than: 0 }
 

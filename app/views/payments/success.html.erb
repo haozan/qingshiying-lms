@@ -28,11 +28,10 @@
                 </div>
                 <div class="text-left">
                   <h3 class="text-xl font-bold text-gray-900 dark:text-gray-50"><%= course.name %></h3>
-                  <% if subscription.payment_type == 'buyout' %>
-                    <span class="badge badge-success">永久访问</span>
-                  <% else %>
-                    <span class="badge badge-info">有效期至 <%= subscription.expires_at.strftime('%Y-%m-%d') %></span>
-                  <% end %>
+                  <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    <div>内容永久查阅</div>
+                    <div>线下资格至 <%= (subscription.started_at + 1.year).strftime('%Y-%m-%d') %></div>
+                  </div>
                 </div>
               </div>
 
