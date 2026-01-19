@@ -6,13 +6,22 @@ class OfflineBookingsController < ApplicationController
     @schedules = OfflineSchedule.available.includes(:course, :offline_bookings).order(schedule_date: :asc, schedule_time: :asc)
     
     if current_user
-      @my_bookings = current_user.offline_bookings.confirmed.includes(offline_schedule: [:course]).order(created_at: :desc)
+      @my_bookings = current_user.offline_bookings.confirmed
+                                  .joins(:offline_schedule)
+                                  .merge(OfflineSchedule.upcoming)
+                                  .order('offline_schedules.schedule_date', 'offline_schedules.schedule_time')
       @eligible = current_user.offline_booking_eligible?
       @expires_at = current_user.offline_booking_expires_at
+      @no_show_count = current_user.no_show_count_this_year
+      @banned = current_user.banned_from_booking?
+      @remaining_chances = current_user.remaining_no_show_chances
     else
       @my_bookings = []
       @eligible = false
       @expires_at = nil
+      @no_show_count = 0
+      @banned = false
+      @remaining_chances = 3
     end
   end
 
@@ -29,10 +38,12 @@ class OfflineBookingsController < ApplicationController
     )
     
     if @booking.save
+      @schedule.increment!(:current_attendees)
       if @schedule.full?
         @schedule.update!(status: 'full')
       end
-      redirect_to offline_bookings_path, notice: '预约成功'
+      success_message = "预约成功！您已预约：#{@schedule.schedule_date.strftime('%Y年%m月%d日')} #{@schedule.schedule_time} - #{@schedule.location}"
+      redirect_to offline_bookings_path, notice: success_message
     else
       redirect_to offline_bookings_path, alert: @booking.errors.full_messages.join(', ')
     end
@@ -42,7 +53,13 @@ class OfflineBookingsController < ApplicationController
     @booking = current_user.offline_bookings.find(params[:id])
     @schedule = @booking.offline_schedule
     
+    # 检查48尊时窗口
+    unless @booking.can_cancel?
+      redirect_to offline_bookings_path, alert: '无法取消预约：距离预约时间不足48小时，无法取消' and return
+    end
+    
     @booking.cancel!
+    @schedule.decrement!(:current_attendees)
     
     if @schedule.status == 'full' && !@schedule.full?
       @schedule.update!(status: 'available')
@@ -55,7 +72,11 @@ class OfflineBookingsController < ApplicationController
   
   def check_offline_booking_eligible
     unless current_user.offline_booking_eligible?
-      redirect_to offline_bookings_path, alert: '您当前没有线下预约资格，请先购买任意课程'
+      if current_user.banned_from_booking?
+        redirect_to offline_bookings_path, alert: '您因当年爽约3次已被禁止预约，次年自动恢复'
+      else
+        redirect_to offline_bookings_path, alert: '您当前没有线下预约资格，请先购买任意课程'
+      end
     end
   end
 end

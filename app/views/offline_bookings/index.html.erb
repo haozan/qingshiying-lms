@@ -8,13 +8,39 @@
       </div>
 
       <!-- User Eligibility Status -->
-      <div class="max-w-4xl mx-auto mb-8">
+      <div class="max-w-4xl mx-auto mb-8 space-y-4">
+        <!-- 预约规则说明 -->
+        <div class="alert alert-info">
+          <%= lucide_icon "info", class: "w-5 h-5" %>
+          <div class="flex-1">
+            <p class="font-medium mb-2">预约规则</p>
+            <ul class="text-sm space-y-1 list-disc list-inside">
+              <li>提前 <strong>48小时</strong> 可以免费取消预约，不计入爽约记录</li>
+              <li><strong>48小时内无法取消预约</strong>，如未到场将被计入爽约</li>
+              <li>当年累计 <strong>3次爽约</strong> 将取消全年预约资格</li>
+            </ul>
+          </div>
+        </div>
+        
         <% if @eligible %>
           <div class="alert-success">
             <%= lucide_icon "check-circle", class: "w-5 h-5" %>
             <div>
               <p class="font-medium">您具有线下预约资格</p>
               <p class="text-sm">预约资格有效期至: <%= @expires_at.strftime('%Y年%m月%d日') %>（基于您最后购买的课程日期）</p>
+              <% if @no_show_count > 0 %>
+                <p class="text-sm mt-1">
+                  <span class="text-orange-600">⚠️ 当年已爽约 <%= @no_show_count %> 次，剩余 <%= @remaining_chances %> 次机会</span>
+                </p>
+              <% end %>
+            </div>
+          </div>
+        <% elsif @banned %>
+          <div class="alert-error">
+            <%= lucide_icon "ban", class: "w-5 h-5" %>
+            <div>
+              <p class="font-medium">您已被禁止预约</p>
+              <p class="text-sm">因当年爽约达到 3 次，已取消全年预约资格。</p>
             </div>
           </div>
         <% else %>
@@ -60,11 +86,20 @@
                     </div>
                     
                     <div>
-                      <%= link_to offline_booking_path(booking), method: :delete,
-                          data: { confirm: "确定要取消此预约吗？" },
-                          class: "btn-outline text-red-600 hover:bg-red-50" do %>
-                        <%= lucide_icon "x", class: "w-4 h-4 mr-1" %>
-                        取消预约
+                      <% if booking.can_cancel? %>
+                        <%= link_to offline_booking_path(booking), method: :delete,
+                            data: { confirm: "确定要取消此预约吗？" },
+                            class: "btn-outline text-red-600 hover:bg-red-50" do %>
+                          <%= lucide_icon "x", class: "w-4 h-4 mr-1" %>
+                          取消预约
+                        <% end %>
+                      <% else %>
+                        <button type="button" disabled
+                                class="btn-outline opacity-50 cursor-not-allowed"
+                                title="距离预约时间不足48小时，无法取消">
+                          <%= lucide_icon "lock", class: "w-4 h-4 mr-1" %>
+                          无法取消
+                        </button>
                       <% end %>
                     </div>
                   </div>
@@ -172,6 +207,8 @@
               end
             %>
             <div data-controller="calendar-view"
+                 data-calendar-view-current-month-value="<%= Time.current.month - 1 %>"
+                 data-calendar-view-current-year-value="<%= Time.current.year %>"
                  data-calendar-view-schedules-value='<%= schedules_json.to_json %>'
                  data-calendar-view-eligible-value="<%= @eligible %>">
               <!-- Calendar Grid -->

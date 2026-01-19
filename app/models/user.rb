@@ -132,7 +132,7 @@ class User < ApplicationRecord
   end
 
   # 检查用户是否有线下预约资格
-  # 逻辑：有任一课程订阅，且从最后购买的课程日期起一年内
+  # 逻辑：有任一课程订阅，且从最后购买的课程日期起一年内，且未被爽约惩罚
   def offline_booking_eligible?
     return false unless subscriptions.active.any?
     
@@ -141,7 +141,10 @@ class User < ApplicationRecord
     return false if latest_subscription.started_at.nil?
     
     # 检查是否在一年有效期内
-    Time.current < (latest_subscription.started_at + 1.year)
+    return false unless Time.current < (latest_subscription.started_at + 1.year)
+    
+    # 检查是否被爽约惩罚
+    !banned_from_booking?
   end
   
   # 获取线下预约资格到期日期
@@ -150,6 +153,24 @@ class User < ApplicationRecord
     return nil if latest_subscription.nil? || latest_subscription.started_at.nil?
     
     latest_subscription.started_at + 1.year
+  end
+  
+  # 获取当年爽约次数
+  def no_show_count_this_year
+    offline_bookings.no_show
+      .joins(:offline_schedule)
+      .where('EXTRACT(YEAR FROM offline_schedules.schedule_date) = ?', Time.current.year)
+      .count
+  end
+  
+  # 检查是否因爽约被禁止预约（当年爽约3次）
+  def banned_from_booking?
+    no_show_count_this_year >= 3
+  end
+  
+  # 获取剩余可爽约次数
+  def remaining_no_show_chances
+    [3 - no_show_count_this_year, 0].max
   end
 
   # write your own code here

@@ -1,0 +1,53 @@
+<% content_for :title, "Edit Offline booking" %>
+
+<div class="container-md">
+  <div class="flex items-center space-x-4">
+    <%= link_to admin_offline_bookings_path, class: "btn-ghost text-sm py-1 px-3" do %>
+      <%= lucide_icon "arrow-left", class: "w-4 h-4 mr-2" %>
+      Back to Offline bookings
+    <% end %>
+  </div>
+
+  <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50 mt-4 mb-8">Edit Offline booking</h1>
+
+  <!-- Form -->
+  <div class="card bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+    <div class="card-body">
+      <%= form_with model: [:admin, @offline_booking], local: true, class: "space-y-6" do |form| %>
+        <!-- Status -->
+        <div class="form-group">
+          <%= form.label :status %>
+          <%= form.text_field :status, placeholder: "Enter status..." %>
+        </div>
+
+        <!-- Booked at -->
+        <div class="form-group">
+          <%= form.label :booked_at %>
+          <%= form.datetime_field :booked_at, placeholder: "Select booked at..." %>
+        </div>
+
+        <!-- User -->
+        <div class="form-group">
+          <%= form.label :user_id, "User" %>
+          <%= form.select :user_id,
+              options_for_select([['Select User', '']] + User.all.map { |item| [item.name, item.id] }, @offline_booking.user_id) %>
+        </div>
+
+        <!-- Offline schedule -->
+        <div class="form-group">
+          <%= form.label :offline_schedule_id, "Offline schedule" %>
+          <%= form.select :offline_schedule_id,
+              options_for_select([['Select Offline schedule', '']] + OfflineSchedule.all.map { |item| [item.id, item.id] }, @offline_booking.offline_schedule_id) %>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex justify-end space-x-3">
+          <%= link_to admin_offline_booking_path(@offline_booking.id), class: "btn-ghost" do %>
+            Cancel
+          <% end %>
+          <%= form.submit "Update Offline booking", class: "btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -39,12 +39,13 @@ export default class extends Controller {
   declare readonly scheduleListTarget: HTMLElement
 
   private selectedDate: Date | null = null
-  private monthNames = ["一月", "二月", "三月", "四月", "五月", "六月", 
-                        "七月", "八月", "九月", "十月", "十一月", "十二月"]
+  private monthNames = ["一月", "二月", "三月", "四月", "五月", "六月",
+    "七月", "八月", "九月", "十月", "十一月", "十二月"]
   private dayNames = ["日", "一", "二", "三", "四", "五", "六"]
 
   connect() {
     const today = new Date()
+    today.setHours(0, 0, 0, 0)
     if (!this.currentMonthValue) this.currentMonthValue = today.getMonth()
     if (!this.currentYearValue) this.currentYearValue = today.getFullYear()
     
@@ -83,7 +84,7 @@ export default class extends Controller {
     const dateStr = target.dataset.date
     if (!dateStr) return
 
-    this.selectedDate = new Date(dateStr)
+    this.selectedDate = new Date(`${dateStr}T00:00:00`)
     this.renderCalendar()
   }
 
@@ -98,7 +99,7 @@ export default class extends Controller {
     const daysInMonth = lastDay.getDate()
     const startDayOfWeek = firstDay.getDay()
 
-    let html = `
+    const html = `
       <div class="mb-4">
         <div class="flex items-center justify-between mb-4">
           <button type="button" 
@@ -152,6 +153,7 @@ export default class extends Controller {
     // Calendar days
     for (let day = 1; day <= daysInMonth; day++) {
       const currentDate = new Date(this.currentYearValue, this.currentMonthValue, day)
+      currentDate.setHours(0, 0, 0, 0)
       const dateStr = this.formatDate(currentDate)
       const schedulesOnDay = this.getSchedulesForDate(dateStr)
       const isToday = currentDate.getTime() === today.getTime()
@@ -160,14 +162,14 @@ export default class extends Controller {
       const isPast = currentDate < today
       const hasSchedules = schedulesOnDay.length > 0
 
-      let classes = 'aspect-square p-1 rounded-lg text-center cursor-pointer transition-colors '
+      let classes = 'aspect-square p-1 rounded-lg text-center cursor-pointer transition-all '
       
       if (isPast) {
         classes += 'text-muted/50 cursor-not-allowed '
       } else if (isSelected) {
-        classes += 'bg-primary text-white font-bold '
+        classes += 'border-2 border-orange-500 font-bold '
       } else if (hasSchedules) {
-        classes += 'bg-primary/10 text-primary font-medium hover:bg-primary/20 '
+        classes += 'bg-green-50 text-green-700 font-medium hover:bg-green-100 '
       } else if (isToday) {
         classes += 'border-2 border-primary text-foreground hover:bg-surface '
       } else {
@@ -241,7 +243,8 @@ export default class extends Controller {
               <div class="flex items-center gap-4 mb-2">
                 <div class="flex items-center gap-2 text-foreground font-medium">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                   </svg>
                   ${schedule.date}
                 </div>

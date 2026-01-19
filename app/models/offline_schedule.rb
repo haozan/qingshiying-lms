@@ -13,11 +13,6 @@ class OfflineSchedule < ApplicationRecord
   scope :available, -> { where(status: 'available').where('schedule_date >= ?', Date.today) }
   scope :upcoming, -> { where('schedule_date >= ?', Date.today).order(schedule_date: :asc) }
 
-  # 当前预约人数
-  def current_attendees
-    offline_bookings.where(status: 'confirmed').count
-  end
-
   # 是否已满
   def full?
     current_attendees >= max_attendees

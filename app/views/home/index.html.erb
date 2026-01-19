@@ -3,8 +3,7 @@
   <div class="mx-auto max-w-7xl px-6 pt-24 pb-12 sm:pt-32 lg:px-8" data-testid="home-first-section">
     <div class="mx-auto max-w-2xl text-center">
       <h1 class="text-4xl font-bold tracking-tight sm:text-6xl leading-tight">
-        <span class="block text-base-content">别让 AI 淘汰你</span>
-        <span class="block text-primary mt-2">让 AI 成为你的超级杠杆</span>
+        <span class="block text-primary mt-2">立即开启你的人生蜕变</span>
       </h1>
       <p class="mt-6 text-lg leading-8 text-base-content/80">
         Hi，我是镐赞。在青狮营 2.0，带你开启 AI 时代的人生蜕变。
@@ -15,7 +14,7 @@
           <%= link_to "我的进度", dashboard_progresses_path, class: "btn-secondary" %>
         <% else %>
           <%= link_to "立即注册", sign_up_path, class: "btn-primary" %>
-          <%= link_to "浏览课程", courses_path, class: "btn-secondary" %>
+          <%= link_to "全部课程", courses_path, class: "btn-secondary" %>
         <% end %>
       </div>
       
@@ -146,7 +145,7 @@
         </p>
         <div class="flex gap-4 justify-center">
           <% if current_user %>
-            <%= link_to "浏览课程", courses_path, class: "btn-primary btn-lg" %>
+            <%= link_to "全部课程", courses_path, class: "btn-primary btn-lg" %>
           <% else %>
             <%= link_to "立即注册", sign_up_path, class: "btn-primary btn-lg" %>
           <% end %>
