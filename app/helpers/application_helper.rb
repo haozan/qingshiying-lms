@@ -28,6 +28,11 @@ module ApplicationHelper
     end
   end
 
+  # 课程价格颜色
+  def course_price_color(course)
+    'text-accent'  # 所有课程统一使用点缀色黄色
+  end
+
   # 渲染Markdown内容
   def render_markdown(content)
     return "" if content.blank?

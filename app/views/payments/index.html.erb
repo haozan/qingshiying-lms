@@ -1,0 +1,125 @@
+<% content_for :title, "我的订单" %>
+
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+  <div class="container-lg">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-foreground mb-2">我的订单</h1>
+      <p class="text-secondary">查看所有订单记录和支付状态</p>
+    </div>
+
+    <!-- Orders List -->
+    <% if @payments.any? %>
+      <div class="space-y-4">
+        <% @payments.each do |payment| %>
+          <div class="card">
+            <div class="card-body">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <!-- Order Info -->
+                <div class="flex-1">
+                  <div class="flex items-start gap-4">
+                    <!-- Course Icon -->
+                    <% if payment.payable.is_a?(Subscription) && payment.payable.course %>
+                      <div class="w-16 h-16 flex-shrink-0 bg-gradient-to-br <%= course_gradient_class(payment.payable.course) %> flex items-center justify-center text-white">
+                        <%= lucide_icon course_icon(payment.payable.course), class: "w-8 h-8" %>
+                      </div>
+                    <% else %>
+                      <div class="w-16 h-16 flex-shrink-0 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                        <%= lucide_icon "package", class: "w-8 h-8 text-gray-400" %>
+                      </div>
+                    <% end %>
+
+                    <!-- Order Details -->
+                    <div class="flex-1">
+                      <h3 class="text-lg font-bold text-foreground mb-1">
+                        <%= payment.product_description %>
+                      </h3>
+                      <div class="flex flex-wrap gap-4 text-sm text-secondary">
+                        <div class="flex items-center gap-1">
+                          <%= lucide_icon "calendar", class: "w-4 h-4" %>
+                          <%= payment.created_at.strftime('%Y-%m-%d %H:%M') %>
+                        </div>
+                        <div class="flex items-center gap-1">
+                          <%= lucide_icon "credit-card", class: "w-4 h-4" %>
+                          订单号: <%= payment.id %>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Price & Status -->
+                <div class="flex items-center gap-6 md:flex-shrink-0">
+                  <!-- Price -->
+                  <div class="text-right">
+                    <div class="text-2xl font-bold text-foreground">
+                      ¥<%= sprintf('%.2f', payment.amount) %>
+                    </div>
+                    <div class="text-xs text-muted">
+                      <%= payment.currency.upcase %>
+                    </div>
+                  </div>
+
+                  <!-- Status Badge -->
+                  <div class="w-24 text-center">
+                    <% case payment.status %>
+                    <% when 'paid' %>
+                      <span class="badge-success">已支付</span>
+                    <% when 'pending' %>
+                      <span class="badge badge-warning">等待支付</span>
+                    <% when 'processing' %>
+                      <span class="badge badge-info">支付中</span>
+                    <% when 'failed' %>
+                      <span class="badge-danger">支付失败</span>
+                    <% when 'canceled' %>
+                      <span class="badge badge-gray">已取消</span>
+                    <% when 'refunded' %>
+                      <span class="badge badge-gray">已退款</span>
+                    <% else %>
+                      <span class="badge badge-neutral"><%= payment.status %></span>
+                    <% end %>
+                  </div>
+
+                  <!-- Action Button -->
+                  <div>
+                    <% if payment.pending? %>
+                      <%= link_to pay_payment_path(payment), data: { turbo_method: :post }, class: "btn-primary btn-sm" do %>
+                        <%= lucide_icon "credit-card", class: "w-4 h-4" %>
+                        <span>去支付</span>
+                      <% end %>
+                    <% elsif payment.processing? %>
+                      <%= link_to pay_payment_path(payment), data: { turbo_method: :post }, class: "btn-primary btn-sm" do %>
+                        <%= lucide_icon "credit-card", class: "w-4 h-4" %>
+                        <span>继续支付</span>
+                      <% end %>
+                    <% elsif payment.paid? && payment.payable.is_a?(Subscription) %>
+                      <%= link_to course_path(payment.payable.course), class: "btn-outline btn-sm" do %>
+                        <%= lucide_icon "arrow-right", class: "w-4 h-4" %>
+                        <span>查看课程</span>
+                      <% end %>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Pagination -->
+      <div class="mt-8">
+        <%= paginate @payments %>
+      </div>
+    <% else %>
+      <!-- Empty State -->
+      <div class="card">
+        <div class="card-body text-center py-16">
+          <%= lucide_icon "shopping-bag", class: "w-16 h-16 mx-auto mb-4 text-muted" %>
+          <h3 class="text-xl font-bold text-foreground mb-2">暂无订单</h3>
+          <p class="text-secondary mb-6">您还没有任何订单记录</p>
+          <%= link_to "浏览课程", courses_path, class: "btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

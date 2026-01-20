@@ -106,6 +106,7 @@ class User < ApplicationRecord
   has_many :progresses, dependent: :destroy
   has_many :homeworks, dependent: :destroy
   has_many :offline_bookings, dependent: :destroy
+  has_many :payments, dependent: :destroy
 
   # 检查用户是否有课程权限
   def has_access_to?(course)

@@ -23,7 +23,7 @@ Rails.application.routes.draw do
   resources :subscriptions, only: [:new, :create, :destroy]
   # End routes for subscriptions
 
-  resources :payments, only: [] do
+  resources :payments, only: [:index] do
     member do
       get :pay
       post :pay

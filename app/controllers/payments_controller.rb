@@ -3,6 +3,11 @@ class PaymentsController < ApplicationController
   before_action :set_payment, only: [:pay, :success, :failure]
   skip_before_action :verify_authenticity_token, only: [:webhook], raise: false
 
+  def index
+    # 显示当前用户的所有订单
+    @payments = current_user.payments.includes(:payable).recent.page(params[:page]).per(10)
+  end
+
   def pay
     # Initialize Stripe payment for this payment record
     stripe_service = StripePaymentService.new(@payment, request)

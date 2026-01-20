@@ -4,8 +4,8 @@ class SubscriptionsController < ApplicationController
   def new
     @course = Course.friendly.find(params[:course_id])
     
-    # 检查是否已经订阅
-    @existing_subscription = current_user.subscriptions.find_by(course: @course, status: ['active', 'pending'])
+    # 只检查已支付的订阅（active），未支付的（pending）不算已订阅
+    @existing_subscription = current_user.subscriptions.find_by(course: @course, status: 'active')
     
     # 统一价格（永久内容+一年线下）
     @price = @course.annual_price
@@ -33,13 +33,21 @@ class SubscriptionsController < ApplicationController
     # 统一价格
     amount = @course.annual_price
     
-    # 创建支付记录
-    @payment = @subscription.create_payment!(
-      user: current_user,
-      amount: amount,
-      currency: 'cny',
-      status: 'pending'
-    )
+    # 如果已有未支付的 payment，重用它；否则创建新的
+    if @subscription.payment&.pending?
+      @payment = @subscription.payment
+      # 更新价格（以防课程价格变动）
+      @payment.update!(amount: amount)
+    else
+      # 删除旧 payment（如果有），创建新的
+      @subscription.payment&.destroy
+      @payment = @subscription.create_payment!(
+        user: current_user,
+        amount: amount,
+        currency: 'cny',
+        status: 'pending'
+      )
+    end
     
     # 重定向到 Stripe 支付页面 (test环境直接成功)
     if Rails.env.test?

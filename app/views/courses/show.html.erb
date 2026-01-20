@@ -61,7 +61,7 @@
                   <div class="text-center mb-2">
                     <span class="text-sm text-white/60 line-through">原价 ¥<%= sprintf('%.0f', @course.buyout_price) %></span>
                   </div>
-                  <div class="text-3xl font-bold mb-2 text-center text-yellow-400">¥<%= sprintf('%.0f', @course.annual_price) %></div>
+                  <div class="text-3xl font-bold mb-2 text-center <%= course_price_color(@course) %>">¥<%= sprintf('%.0f', @course.annual_price) %></div>
                   <div class="text-center mb-3">
                     <span class="badge-warning text-xs">限时特惠</span>
                   </div>
