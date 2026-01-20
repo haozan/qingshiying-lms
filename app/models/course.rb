@@ -58,6 +58,11 @@ class Course < ApplicationRecord
     false  # 不再使用买断模式
   end
 
+  # 是否为免费课程
+  def free?
+    annual_price.to_f.zero?
+  end
+
   # 是否支持线下课(仅AI编程课)
   def has_offline_class?
     name.include?('AI 编程课') || name.include?('编程')

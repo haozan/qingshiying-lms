@@ -17,8 +17,10 @@ class Subscription < ApplicationRecord
   end
   
   # 检查线下预约资格（购买后一年内）
+  # 免费课程不获得线下预约资格
   def offline_eligible?
     return false unless status == 'active'
+    return false if course.free?  # 免费课程无线下预约资格
     return false if started_at.nil?
     
     Time.current < (started_at + 1.year)
@@ -50,7 +52,11 @@ class Subscription < ApplicationRecord
   end
 
   def payment_description
-    "#{course.name} - 课程订阅（永久内容+一年线下）"
+    if course.free?
+      "#{course.name} - 课程订阅（免费课程）"
+    else
+      "#{course.name} - 课程订阅（永久内容+一年线下）"
+    end
   end
 
   # Always use 'payment' mode (one-time checkout, not recurring subscription)

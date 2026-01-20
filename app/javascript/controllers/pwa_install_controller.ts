@@ -60,7 +60,9 @@ export default class extends Controller {
   async install() {
     // 如果浏览器不支持 PWA 安装，给出提示
     if (!this.deferredPrompt) {
-      alert('您的浏览器暂不支持安装应用。\n\n请使用 Chrome、Edge 或 Safari 浏览器访问。')
+      if (typeof window.showToast === 'function') {
+        window.showToast('您的浏览器暂不支持安装应用，请使用 Chrome、Edge 或 Safari 浏览器访问', 'warning')
+      }
       return
     }
 

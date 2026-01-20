@@ -26,7 +26,16 @@ class SubscriptionsController < ApplicationController
       return
     end
     
-    # 设置为 pending 状态
+    # 免费课程：直接创建 active 订阅，无需支付
+    if @course.free?
+      @subscription.status = 'active'
+      @subscription.started_at = Time.current
+      @subscription.save!
+      redirect_to course_path(@course), notice: '报名成功！您现在可以开始学习了'
+      return
+    end
+    
+    # 付费课程：设置为 pending 状态，进入支付流程
     @subscription.status = 'pending'
     @subscription.save!
     
