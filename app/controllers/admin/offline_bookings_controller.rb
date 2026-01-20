@@ -18,7 +18,7 @@ class Admin::OfflineBookingsController < Admin::BaseController
     @offline_booking = OfflineBooking.new(offline_booking_params)
 
     if @offline_booking.save
-      redirect_to admin_offline_booking_path(@offline_booking), notice: 'Offline booking was successfully created.'
+      redirect_to admin_offline_booking_path(@offline_booking), notice: '线下预约创建成功'
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class Admin::OfflineBookingsController < Admin::BaseController
 
   def update
     if @offline_booking.update(offline_booking_params)
-      redirect_to admin_offline_booking_path(@offline_booking), notice: 'Offline booking was successfully updated.'
+      redirect_to admin_offline_booking_path(@offline_booking), notice: '线下预约更新成功'
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class Admin::OfflineBookingsController < Admin::BaseController
 
   def destroy
     @offline_booking.destroy
-    redirect_to admin_offline_bookings_path, notice: 'Offline booking was successfully deleted.'
+    redirect_to admin_offline_bookings_path, notice: '线下预约删除成功'
   end
   
   # 标记为爽约

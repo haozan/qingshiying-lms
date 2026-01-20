@@ -34,9 +34,11 @@ export default class extends Controller {
     window.addEventListener('beforeinstallprompt', this.handleBeforeInstallPrompt.bind(this))
     window.addEventListener('appinstalled', this.handleAppInstalled.bind(this))
 
+    // 如果已经在 PWA 模式下运行，隐藏安装按钮
     if (this.isStandalone()) {
       this.hideInstallButton()
     }
+    // 否则按钮始终显示，等待 beforeinstallprompt 事件或用户点击
   }
 
   disconnect() {
@@ -47,10 +49,7 @@ export default class extends Controller {
   private handleBeforeInstallPrompt(e: Event) {
     e.preventDefault()
     this.deferredPrompt = e as BeforeInstallPromptEvent
-
-    if (this.hasInstallButtonTarget) {
-      this.installButtonTarget.classList.remove('hidden')
-    }
+    // 不需要手动显示按钮，因为现在默认就是显示的
   }
 
   private handleAppInstalled() {
@@ -59,7 +58,9 @@ export default class extends Controller {
   }
 
   async install() {
+    // 如果浏览器不支持 PWA 安装，给出提示
     if (!this.deferredPrompt) {
+      alert('您的浏览器暂不支持安装应用。\n\n请使用 Chrome、Edge 或 Safari 浏览器访问。')
       return
     }
 

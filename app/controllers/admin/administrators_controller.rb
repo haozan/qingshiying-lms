@@ -18,7 +18,7 @@ class Admin::AdministratorsController < Admin::BaseController
     @administrator.first_login = false if @administrator.name == 'admin'
 
     if @administrator.save
-      redirect_to admin_administrator_path(@administrator), notice: 'Administrator was successfully created.'
+      redirect_to admin_administrator_path(@administrator), notice: '管理员创建成功'
     else
       render :new, status: :unprocessable_entity
     end
@@ -27,7 +27,7 @@ class Admin::AdministratorsController < Admin::BaseController
   def edit
     # Redirect to account edit page if editing self
     if @administrator == current_admin
-      redirect_to edit_admin_account_path, notice: 'Please use account settings to edit your own profile.'
+      redirect_to edit_admin_account_path, notice: '请使用账户设置来编辑您自己的个人资料'
     end
   end
 
@@ -39,7 +39,7 @@ class Admin::AdministratorsController < Admin::BaseController
     end
 
     if @administrator.update(update_params)
-      redirect_to admin_administrator_path(@administrator), notice: 'Administrator was successfully updated.'
+      redirect_to admin_administrator_path(@administrator), notice: '管理员更新成功'
     else
       render :edit, status: :unprocessable_entity
     end
@@ -47,12 +47,12 @@ class Admin::AdministratorsController < Admin::BaseController
 
   def destroy
     unless @administrator.can_be_deleted_by?(current_admin)
-      redirect_to admin_administrators_path, alert: 'Cannot delete this administrator.'
+      redirect_to admin_administrators_path, alert: '无法删除该管理员'
       return
     end
 
     @administrator.destroy
-    redirect_to admin_administrators_path, notice: 'Administrator was successfully deleted.'
+    redirect_to admin_administrators_path, notice: '管理员删除成功'
   end
 
   private
@@ -70,7 +70,7 @@ class Admin::AdministratorsController < Admin::BaseController
 
   def ensure_super_admin
     unless current_admin.can_manage_administrators?
-      redirect_to admin_administrators_path, alert: 'Access denied. Super admin privileges required.'
+      redirect_to admin_administrators_path, alert: '访问拒绝。需要超级管理员权限。'
     end
   end
 

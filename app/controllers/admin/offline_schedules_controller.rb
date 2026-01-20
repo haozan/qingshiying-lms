@@ -16,7 +16,7 @@ class Admin::OfflineSchedulesController < Admin::BaseController
     @offline_schedule = OfflineSchedule.new(offline_schedule_params)
 
     if @offline_schedule.save
-      redirect_to admin_offline_schedule_path(@offline_schedule), notice: 'Offline schedule was successfully created.'
+      redirect_to admin_offline_schedule_path(@offline_schedule), notice: '线下日程创建成功'
     else
       render :new, status: :unprocessable_entity
     end
@@ -27,7 +27,7 @@ class Admin::OfflineSchedulesController < Admin::BaseController
 
   def update
     if @offline_schedule.update(offline_schedule_params)
-      redirect_to admin_offline_schedule_path(@offline_schedule), notice: 'Offline schedule was successfully updated.'
+      redirect_to admin_offline_schedule_path(@offline_schedule), notice: '线下日程更新成功'
     else
       render :edit, status: :unprocessable_entity
     end
@@ -35,7 +35,7 @@ class Admin::OfflineSchedulesController < Admin::BaseController
 
   def destroy
     @offline_schedule.destroy
-    redirect_to admin_offline_schedules_path, notice: 'Offline schedule was successfully deleted.'
+    redirect_to admin_offline_schedules_path, notice: '线下日程删除成功'
   end
 
   private

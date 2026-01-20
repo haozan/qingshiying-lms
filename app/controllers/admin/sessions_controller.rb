@@ -20,7 +20,7 @@ class Admin::SessionsController < Admin::BaseController
       AdminOplogService.log_login(admin, request)
       redirect_to admin_root_path
     else
-      flash.now[:alert] = 'Username or password is wrong'
+      flash.now[:alert] = '用户名或密码错误'
       @first_login = first_admin?
       render 'new', status: :unprocessable_entity
     end
@@ -39,7 +39,7 @@ class Admin::SessionsController < Admin::BaseController
     attempts = Rails.cache.read(key).to_i
 
     if attempts >= 5
-      flash.now[:alert] = 'Too many login attempts. Please wait a moment and try again.'
+      flash.now[:alert] = '登录尝试次数过多。请稍后再试。'
       render 'new', status: :too_many_requests
     else
       Rails.cache.write(key, attempts + 1, expires_in: 1.minute)

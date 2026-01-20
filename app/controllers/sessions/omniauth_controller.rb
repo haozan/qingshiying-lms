@@ -8,7 +8,7 @@ class Sessions::OmniauthController < ApplicationController
       session_record = @user.sessions.create!
       cookies.signed.permanent[:session_token] = { value: session_record.id, httponly: true }
 
-      redirect_to root_path, notice: "Successfully signed in with #{omniauth.provider.humanize}"
+      redirect_to root_path, notice: "#{omniauth.provider.humanize} 登录成功"
     else
       flash[:alert] = handle_password_errors(@user)
       redirect_to sign_in_path
@@ -20,13 +20,13 @@ class Sessions::OmniauthController < ApplicationController
 
     error_message = case error_type.to_s
     when 'access_denied'
-      "Authorization was cancelled. Please try again if you'd like to sign in."
+      "授权已取消。如果您想登录，请重试。"
     when 'invalid_credentials'
-      "Invalid credentials provided. Please check your information and try again."
+      "无效的凭据。请检查您的信息并重试。"
     when 'timeout'
-      "Authentication timed out. Please try again."
+      "认证超时。请重试。"
     else
-      "Authentication failed: #{error_type&.to_s&.humanize || 'Unknown error'}"
+      "认证失败：#{error_type&.to_s&.humanize || '未知错误'}"
     end
 
     flash[:alert] = error_message
