@@ -22,7 +22,7 @@
               <span class="font-semibold text-white">工具：</span>
               <span class="font-bold text-white text-lg"><%= tool[:name] %></span>
               <% if tool[:self_developed] %>
-                <span class="px-2 py-1 bg-yellow-500/90 text-gray-900 text-xs font-bold rounded">自研</span>
+                <span class="badge badge-warning text-xs">自研</span>
               <% end %>
             </div>
           <% end %>
@@ -71,9 +71,6 @@
               <div class="mb-4 p-4 bg-white/10 rounded-lg">
                 <% if @course.free? %>
                   <!-- 免费课程 -->
-                  <div class="text-center mb-2">
-                    <span class="badge-success text-sm">免费</span>
-                  </div>
                   <div class="text-center mb-2">
                     <span class="text-sm text-white/60 line-through">原价 ¥<%= sprintf('%.0f', @course.buyout_price) %></span>
                   </div>
