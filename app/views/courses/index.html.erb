@@ -86,13 +86,7 @@
                   <%= lucide_icon "play-circle", class: "w-5 h-5" %>
                   <span>继续学习</span>
                 <% end %>
-                
-                <% if course.subscription? %>
-                  <p class="text-center text-sm text-muted mt-3">
-                    有效期至: <%= @subscriptions[course.id].expires_at&.strftime('%Y-%m-%d') || '永久' %>
-                  </p>
-                <% end %>
-              <% else %>
+                <% else %>
                 <%= link_to course_path(course), class: "btn-outline w-full flex items-center justify-center gap-2 group-hover:btn-primary transition-all" do %>
                   <%= lucide_icon "eye", class: "w-5 h-5" %>
                   <span>查看详情</span>

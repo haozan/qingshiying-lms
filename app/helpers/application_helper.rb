@@ -18,9 +18,9 @@ module ApplicationHelper
   def course_gradient_class(course)
     case course.name
     when /AI.*编程/
-      'from-success to-info'
+      'from-emerald-700 to-teal-800'
     when /写作.*运营/
-      'from-warning to-danger'
+      'from-rose-700 to-purple-800'
     when /AI/
       'from-primary to-secondary'
     else
