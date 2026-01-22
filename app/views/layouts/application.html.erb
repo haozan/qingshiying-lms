@@ -24,6 +24,23 @@
       <%= Rails.application.config.x.appname %>
     <%- end %>
     </title>
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<%= content_for?(:title) ? yield(:title) + ' | ' + Rails.application.config.x.appname : Rails.application.config.x.appname %>">
+    <meta property="og:site_name" content="<%= Rails.application.config.x.appname %>">
+    <meta property="og:description" content="<%= @page_description || '立即开启你的人生蜕变 - 在青狮营 2.0，带你开启 AI 时代的人生蜕变。' %>">
+    <meta property="og:image" content="<%= request.base_url + asset_path('og-image.png') %>">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="<%= request.original_url %>">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= content_for?(:title) ? yield(:title) + ' | ' + Rails.application.config.x.appname : Rails.application.config.x.appname %>">
+    <meta name="twitter:description" content="<%= @page_description || '立即开启你的人生蜕变 - 在青狮营 2.0，带你开启 AI 时代的人生蜕变。' %>">
+    <meta name="twitter:image" content="<%= request.base_url + asset_path('og-image.png') %>">
+    
     <%= csrf_meta_tags %>
     <%= action_cable_meta_tag %>
     <%= render 'layouts/qiniu_sdk' %>
