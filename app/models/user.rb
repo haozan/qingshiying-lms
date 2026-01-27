@@ -113,10 +113,7 @@ class User < ApplicationRecord
     subscription = subscriptions.find_by(course: course, status: 'active')
     return false unless subscription
 
-    # 买断制课程永久有效
-    return true if course.buyout?
-
-    # 订阅制课程检查过期时间
+    # 检查订阅过期时间
     subscription.expires_at.nil? || subscription.expires_at > Time.current
   end
 

@@ -150,13 +150,9 @@
                       <% end %>
                     </div>
                     
-                    <% if @course.course_type == 'subscription' %>
+                    <% if !@course.free? %>
                       <p class="text-sm text-muted mt-4">
                         订阅价格：<span class="text-primary font-semibold">￥<%= @course.annual_price %>/年</span>
-                      </p>
-                    <% else %>
-                      <p class="text-sm text-muted mt-4">
-                        买断价格：<span class="text-primary font-semibold">￥<%= @course.buyout_price %></span>
                       </p>
                     <% end %>
                   </div>

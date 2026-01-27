@@ -21,7 +21,7 @@
                 </div>
                 <div>
                   <h3 class="text-xl font-bold text-gray-900 dark:text-gray-50"><%= stat[:course].name %></h3>
-                  <% if stat[:course].buyout? %>
+                  <% if !stat[:course].free? %>
                     <span class="badge badge-success text-xs">已买断</span>
                   <% elsif stat[:subscription].expires_at %>
                     <% days_left = (stat[:subscription].expires_at.to_date - Date.current).to_i %>

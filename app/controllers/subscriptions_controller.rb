@@ -7,8 +7,8 @@ class SubscriptionsController < ApplicationController
     # 只检查已支付的订阅（active），未支付的（pending）不算已订阅
     @existing_subscription = current_user.subscriptions.find_by(course: @course, status: 'active')
     
-    # 统一价格（永久内容+一年线下）
-    @price = @course.annual_price
+    # 使用三档价格系统：优先使用早鸟价，其次现价，最后回退到旧价格
+    @price = @course.early_bird_price.presence || @course.current_price.presence || @course.annual_price
   end
 
   def create
@@ -39,8 +39,8 @@ class SubscriptionsController < ApplicationController
     @subscription.status = 'pending'
     @subscription.save!
     
-    # 统一价格
-    amount = @course.annual_price
+    # 使用三档价格系统：优先使用早鸟价，其次现价，最后回退到旧价格
+    amount = @course.early_bird_price.presence || @course.current_price.presence || @course.annual_price
     
     # 如果已有未支付的 payment，重用它；否则创建新的
     if @subscription.payment&.pending?

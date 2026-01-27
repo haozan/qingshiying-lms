@@ -57,6 +57,8 @@ module ApplicationHelper
   def format_course_price(course)
     if course.free?
       '免费'
+    elsif course.early_bird_price.present?
+      "¥#{sprintf('%.0f', course.early_bird_price)}"
     else
       "¥#{sprintf('%.0f', course.annual_price)}"
     end

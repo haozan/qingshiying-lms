@@ -72,7 +72,7 @@
                 <% if @course.free? %>
                   <!-- 免费课程 -->
                   <div class="text-center mb-2">
-                    <span class="text-sm text-white/60 line-through">原价 ¥<%= sprintf('%.0f', @course.buyout_price) %></span>
+                    <span class="text-sm text-white/60 line-through">原价 ¥<%= sprintf('%.0f', @course.original_price) %></span>
                   </div>
                   <div class="text-3xl font-bold mb-3 text-center text-white">免费</div>
                   <div class="text-sm text-white/90 space-y-1">
@@ -82,19 +82,41 @@
                     </div>
                   </div>
                 <% else %>
-                  <!-- 付费课程 -->
-                  <% if @course.buyout_price.present? && @course.buyout_price > @course.annual_price %>
-                    <div class="text-center mb-2">
-                      <span class="text-sm text-white/60 line-through">原价 ¥<%= sprintf('%.0f', @course.buyout_price) %></span>
+                  <!-- 付费课程 - 三档价格 -->
+                  <% if @course.original_price.present? && @course.early_bird_price.present? %>
+                    <!-- 三档价格显示 -->
+                    <div class="space-y-3">
+                      <!-- 原价 -->
+                      <div class="text-center">
+                        <div class="text-sm text-white/60">原价</div>
+                        <div class="text-lg text-white/60 line-through">¥<%= sprintf('%.0f', @course.original_price) %></div>
+                      </div>
+                      
+                      <!-- 现价 -->
+                      <% if @course.current_price.present? %>
+                        <div class="text-center">
+                          <div class="text-sm text-white/80">现价</div>
+                          <div class="text-2xl font-bold text-white">¥<%= sprintf('%.0f', @course.current_price) %></div>
+                        </div>
+                      <% end %>
+                      
+                      <!-- 早鸟价（最突出） -->
+                      <div class="text-center border-t border-white/20 pt-3">
+                        <div class="flex items-center justify-center gap-2 mb-1">
+                          <%= lucide_icon "zap", class: "w-4 h-4 text-yellow-300" %>
+                          <span class="text-sm font-semibold <%= course_price_color(@course) %>">早鸟特惠</span>
+                        </div>
+                        <div class="text-4xl font-bold <%= course_price_color(@course) %>">¥<%= sprintf('%.0f', @course.early_bird_price) %></div>
+                        <div class="text-xs text-white/60 mt-1">限时优惠</div>
+                      </div>
                     </div>
-                    <div class="text-3xl font-bold mb-2 text-center <%= course_price_color(@course) %>">¥<%= sprintf('%.0f', @course.annual_price) %></div>
-                    <div class="text-center mb-3">
-                      <span class="badge-warning text-xs">限时特惠</span>
-                    </div>
+
                   <% else %>
+                    <!-- 单一价格显示 -->
                     <div class="text-3xl font-bold mb-2 text-center">¥<%= sprintf('%.2f', @course.annual_price) %></div>
                   <% end %>
-                  <div class="text-sm text-white/90 space-y-1">
+                  
+                  <div class="text-sm text-white/90 space-y-1 mt-4">
                     <div class="flex items-center gap-2">
                       <%= lucide_icon "infinity", class: "w-4 h-4" %>
                       <span>课程内容永久查阅</span>

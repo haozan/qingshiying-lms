@@ -8,7 +8,7 @@ namespace :courses do
       puts "✓ #{result[:message]}"
       puts "\n课程列表:"
       Course.ordered.each do |course|
-        puts "  - #{course.name} (#{course.course_type}): #{course.chapters.count} 章, #{course.lessons.count} 节"
+        puts "  - #{course.name}: #{course.chapters.count} 章, #{course.lessons.count} 节"
       end
     else
       puts "✗ 同步失败: #{result[:error]}"

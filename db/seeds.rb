@@ -11,210 +11,236 @@ require 'open-uri'
 
 puts "🌱 Starting seed data..."
 
-# 清理旧数据
-puts "Cleaning old data..."
-Homework.destroy_all
-Progress.destroy_all
-Subscription.destroy_all
-Lesson.destroy_all
-Chapter.destroy_all
-Course.destroy_all
+# ⚠️ 只在开发和测试环境清理旧数据
+# 生产环境保留现有数据，使用 find_or_create_by 确保不覆盖已修改的价格
+if Rails.env.development? || Rails.env.test?
+  puts "Cleaning old data (#{Rails.env} environment)..."
+  Homework.destroy_all
+  Progress.destroy_all
+  Subscription.destroy_all
+  Lesson.destroy_all
+  Chapter.destroy_all
+  Course.destroy_all
+end
 
-# 创建课程
+# 创建课程 - 使用 find_or_create_by 避免覆盖生产环境的价格修改
 puts "Creating courses..."
 
 # AI课程（订阅制）
-ai_course = Course.create!(
-  name: "AI课程",
-  slug: "aikecheng",
-  description: "全面掌握人工智能基础知识和实际应用",
-  course_type: "subscription",
-  annual_price: 999.00,
-  status: "active",
-  position: 1
-)
+ai_course = Course.find_or_create_by!(slug: "aikecheng") do |course|
+  course.name = "AI课程"
+  course.description = "全面掌握人工智能基础知识和实际应用"
+
+  course.original_price = 3999.00
+  course.current_price = 2999.00
+  course.early_bird_price = 1999.00
+  course.annual_price = 1999.00  # 默认使用早鸟价
+  course.status = "active"
+  course.position = 1
+end
 
 # 写作运营课（买断制）
-writing_course = Course.create!(
-  name: "写作运营课",
-  slug: "xiezuoyunyingke",
-  description: "从零开始学习内容创作和运营技巧",
-  course_type: "buyout",
-  buyout_price: 299.00,
-  status: "active",
-  position: 2
-)
+writing_course = Course.find_or_create_by!(slug: "xiezuoyunyingke") do |course|
+  course.name = "写作运营课"
+  course.description = "从零开始学习内容创作和运营技巧"
+
+  course.original_price = 5999.00
+  course.current_price = 3999.00
+  course.early_bird_price = 2999.00
+
+  course.status = "active"
+  course.position = 2
+end
 
 # AI编程课（订阅制）
-programming_course = Course.create!(
-  name: "AI编程课",
-  slug: "aibianchengke",
-  description: "用AI提升编程效率，掌握现代开发技能",
-  course_type: "subscription",
-  annual_price: 1299.00,
-  status: "active",
-  position: 3
-)
+programming_course = Course.find_or_create_by!(slug: "aibianchengke") do |course|
+  course.name = "AI编程课"
+  course.description = "用AI提升编程效率，掌握现代开发技能"
+
+  course.original_price = 19999.00
+  course.current_price = 7999.00
+  course.early_bird_price = 6999.00
+  course.annual_price = 6999.00  # 默认使用早鸟价
+  course.status = "active"
+  course.position = 3
+end
 
 puts "Creating chapters and lessons..."
 
-# AI课程 - 绪论章节
-ai_chapter1 = ai_course.chapters.create!(
-  name: "绪论",
-  slug: "xulun",
-  position: 1
-)
+# AI课程 - 基础章节
+ai_chapter1 = ai_course.chapters.find_or_create_by!(slug: "jichu") do |chapter|
+  chapter.name = "基础"
+  chapter.position = 1
+end
 
-ai_chapter1.lessons.create!([
-  {
-    name: "什么是AI",
-    slug: "shenmeshiai",
-    content: File.read(Rails.root.join("courses/01_AI课程/01_绪论/01_什么是AI.md")),
-    free: true,
-    position: 1
-  },
-  {
-    name: "AI的应用",
-    slug: "ai-yingyong",
-    content: File.read(Rails.root.join("courses/01_AI课程/01_绪论/02_AI的应用.md")),
-    free: false,
-    position: 2
-  }
-])
+# AI课程 - 大模型章节
+ai_chapter2 = ai_course.chapters.find_or_create_by!(slug: "damoxing") do |chapter|
+  chapter.name = "大模型"
+  chapter.position = 2
+end
+
+# AI课程 - 供应商章节
+ai_chapter3 = ai_course.chapters.find_or_create_by!(slug: "gongyingshang") do |chapter|
+  chapter.name = "供应商"
+  chapter.position = 3
+end
+
+# AI课程 - 提示词章节
+ai_chapter4 = ai_course.chapters.find_or_create_by!(slug: "tishici") do |chapter|
+  chapter.name = "提示词"
+  chapter.position = 4
+end
+
+# AI课程 - 实战章节
+ai_chapter5 = ai_course.chapters.find_or_create_by!(slug: "shizhan") do |chapter|
+  chapter.name = "实战"
+  chapter.position = 5
+end
 
 # 写作运营课 - 基础章节
-writing_chapter1 = writing_course.chapters.create!(
-  name: "基础",
-  slug: "jichu",
-  position: 1
-)
+writing_chapter1 = writing_course.chapters.find_or_create_by!(slug: "jichu") do |chapter|
+  chapter.name = "基础"
+  chapter.position = 1
+end
 
-writing_chapter1.lessons.create!([
-  {
-    name: "写作基础",
-    slug: "xiezuojichu",
-    content: File.read(Rails.root.join("courses/02_写作运营课/01_基础/01_写作基础.md")),
-    free: true,
-    position: 1
-  },
-  {
-    name: "内容定位",
-    slug: "neirongdingwei",
-    content: File.read(Rails.root.join("courses/02_写作运营课/01_基础/02_内容定位.md")),
-    free: false,
-    position: 2
-  },
-  {
-    name: "标题技巧",
-    slug: "biaotijiqiao",
-    content: File.read(Rails.root.join("courses/02_写作运营课/01_基础/03_标题技巧.md")),
-    free: false,
-    position: 3
-  }
-])
+if writing_chapter1.lessons.empty?
+  writing_chapter1.lessons.create!([
+    {
+      name: "写作基础",
+      slug: "xiezuojichu",
+      content: File.read(Rails.root.join("courses/02_写作运营课/01_基础/01_写作基础.md")),
+      free: true,
+      position: 1
+    },
+    {
+      name: "内容定位",
+      slug: "neirongdingwei",
+      content: File.read(Rails.root.join("courses/02_写作运营课/01_基础/02_内容定位.md")),
+      free: false,
+      position: 2
+    },
+    {
+      name: "标题技巧",
+      slug: "biaotijiqiao",
+      content: File.read(Rails.root.join("courses/02_写作运营课/01_基础/03_标题技巧.md")),
+      free: false,
+      position: 3
+    }
+  ])
+end
 
 # 写作运营课 - 进阶章节
-writing_chapter2 = writing_course.chapters.create!(
-  name: "进阶",
-  slug: "jinjie",
-  position: 2
-)
+writing_chapter2 = writing_course.chapters.find_or_create_by!(slug: "jinjie") do |chapter|
+  chapter.name = "进阶"
+  chapter.position = 2
+end
 
-writing_chapter2.lessons.create!([
-  {
-    name: "选题策划",
-    slug: "xuanticehua",
-    content: File.read(Rails.root.join("courses/02_写作运营课/02_进阶/01_选题策划.md")),
-    free: false,
-    position: 1
-  },
-  {
-    name: "内容结构",
-    slug: "neirongjiegou",
-    content: File.read(Rails.root.join("courses/02_写作运营课/02_进阶/02_内容结构.md")),
-    free: false,
-    position: 2
-  },
-  {
-    name: "文案优化",
-    slug: "wenanyouhua",
-    content: File.read(Rails.root.join("courses/02_写作运营课/02_进阶/03_文案优化.md")),
-    free: false,
-    position: 3
-  }
-])
+if writing_chapter2.lessons.empty?
+  writing_chapter2.lessons.create!([
+    {
+      name: "选题策划",
+      slug: "xuanticehua",
+      content: File.read(Rails.root.join("courses/02_写作运营课/02_进阶/01_选题策划.md")),
+      free: false,
+      position: 1
+    },
+    {
+      name: "内容结构",
+      slug: "neirongjiegou",
+      content: File.read(Rails.root.join("courses/02_写作运营课/02_进阶/02_内容结构.md")),
+      free: false,
+      position: 2
+    },
+    {
+      name: "文案优化",
+      slug: "wenanyouhua",
+      content: File.read(Rails.root.join("courses/02_写作运营课/02_进阶/03_文案优化.md")),
+      free: false,
+      position: 3
+    }
+  ])
+end
 
 # 写作运营课 - 实战章节
-writing_chapter3 = writing_course.chapters.create!(
-  name: "实战",
-  slug: "shizhan",
-  position: 3
-)
+writing_chapter3 = writing_course.chapters.find_or_create_by!(slug: "shizhan") do |chapter|
+  chapter.name = "实战"
+  chapter.position = 3
+end
 
-writing_chapter3.lessons.create!([
-  {
-    name: "平台运营",
-    slug: "pingtaiyunying",
-    content: File.read(Rails.root.join("courses/02_写作运营课/03_实战/01_平台运营.md")),
-    free: false,
-    position: 1
-  },
-  {
-    name: "数据分析",
-    slug: "shujufenxi",
-    content: File.read(Rails.root.join("courses/02_写作运营课/03_实战/02_数据分析.md")),
-    free: false,
-    position: 2
-  },
-  {
-    name: "变现策略",
-    slug: "bianxiancelue",
-    content: File.read(Rails.root.join("courses/02_写作运营课/03_实战/03_变现策略.md")),
-    free: false,
-    position: 3
-  }
-])
+if writing_chapter3.lessons.empty?
+  writing_chapter3.lessons.create!([
+    {
+      name: "平台运营",
+      slug: "pingtaiyunying",
+      content: File.read(Rails.root.join("courses/02_写作运营课/03_实战/01_平台运营.md")),
+      free: false,
+      position: 1
+    },
+    {
+      name: "数据分析",
+      slug: "shujufenxi",
+      content: File.read(Rails.root.join("courses/02_写作运营课/03_实战/02_数据分析.md")),
+      free: false,
+      position: 2
+    },
+    {
+      name: "变现策略",
+      slug: "bianxiancelue",
+      content: File.read(Rails.root.join("courses/02_写作运营课/03_实战/03_变现策略.md")),
+      free: false,
+      position: 3
+    }
+  ])
+end
 
 # 写作运营课 - 高级章节
-writing_chapter4 = writing_course.chapters.create!(
-  name: "高级",
-  slug: "gaoji",
-  position: 4
-)
+writing_chapter4 = writing_course.chapters.find_or_create_by!(slug: "gaoji") do |chapter|
+  chapter.name = "高级"
+  chapter.position = 4
+end
 
-writing_chapter4.lessons.create!([
-  {
-    name: "个人品牌",
-    slug: "gerenpinpai",
-    content: File.read(Rails.root.join("courses/02_写作运营课/04_高级/01_个人品牌.md")),
-    free: false,
-    position: 1
-  },
-  {
-    name: "私域运营",
-    slug: "siyuyunying",
-    content: File.read(Rails.root.join("courses/02_写作运营课/04_高级/02_私域运营.md")),
-    free: false,
-    position: 2
-  }
-])
+if writing_chapter4.lessons.empty?
+  writing_chapter4.lessons.create!([
+    {
+      name: "个人品牌",
+      slug: "gerenpinpai",
+      content: File.read(Rails.root.join("courses/02_写作运营课/04_高级/01_个人品牌.md")),
+      free: false,
+      position: 1
+    },
+    {
+      name: "私域运营",
+      slug: "siyuyunying",
+      content: File.read(Rails.root.join("courses/02_写作运营课/04_高级/02_私域运营.md")),
+      free: false,
+      position: 2
+    }
+  ])
+end
 
-# AI编程课 - 入门章节
-programming_chapter1 = programming_course.chapters.create!(
-  name: "入门",
-  slug: "rumen",
-  position: 1
-)
+# AI编程课 - 基础章节
+programming_chapter1 = programming_course.chapters.find_or_create_by!(slug: "jichu") do |chapter|
+  chapter.name = "基础"
+  chapter.position = 1
+end
 
-programming_chapter1.lessons.create!([
-  {
-    name: "Python基础",
-    slug: "python-jichu",
-    content: File.read(Rails.root.join("courses/03_AI编程课/01_入门/01_Python基础.md")),
-    free: true,
-    position: 1
-  }
-])
+# AI编程课 - 构建章节
+programming_chapter2 = programming_course.chapters.find_or_create_by!(slug: "goujian") do |chapter|
+  chapter.name = "构建"
+  chapter.position = 2
+end
+
+# AI编程课 - 部署章节
+programming_chapter3 = programming_course.chapters.find_or_create_by!(slug: "bushu") do |chapter|
+  chapter.name = "部署"
+  chapter.position = 3
+end
+
+# AI编程课 - 增长章节
+programming_chapter4 = programming_course.chapters.find_or_create_by!(slug: "zengzhang") do |chapter|
+  chapter.name = "增长"
+  chapter.position = 4
+end
 
 puts "✅ Seed data created successfully!"
 puts "📊 Summary:"

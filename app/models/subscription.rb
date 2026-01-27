@@ -5,7 +5,7 @@ class Subscription < ApplicationRecord
 
   # Validations
   validates :status, presence: true, inclusion: { in: %w[pending active expired cancelled] }
-  validates :payment_type, presence: true, inclusion: { in: %w[annual buyout] }
+
 
   # Scopes
   scope :active, -> { where(status: 'active') }
@@ -65,7 +65,8 @@ class Subscription < ApplicationRecord
   end
 
   def stripe_line_items
-    price = course.annual_price
+    # 使用三档价格系统：优先使用早鸟价，其次现价，最后回退到旧价格
+    price = course.early_bird_price.presence || course.current_price.presence || course.annual_price
     
     [{
       price_data: {

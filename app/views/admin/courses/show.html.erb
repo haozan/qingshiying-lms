@@ -1,0 +1,169 @@
+<% content_for :title, @course.respond_to?(:name) ? @course.name : "Course" %>
+
+<div class="container-lg">
+  <div class="mb-6">
+    <div class="flex items-center space-x-4">
+      <%= link_to admin_courses_path, class: "btn-ghost text-sm py-1 px-3" do %>
+        <%= lucide_icon "arrow-left", class: "w-4 h-4 mr-2" %>
+        Back to Courses
+      <% end %>
+    </div>
+
+    <div class="mt-4 flex items-center justify-between">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50"><%= @course.respond_to?(:name) ? @course.name : "Course ##{@course.id}" %></h1>
+
+      <div class="flex items-center space-x-3">
+        <%= link_to edit_admin_course_path(@course.id), class: "btn-primary" do %>
+          <%= lucide_icon "pencil", class: "w-5 h-5 mr-2" %>
+          编辑
+        <% end %>
+
+        <%= link_to admin_course_path(@course.id),
+            method: :delete,
+            data: { confirm: "确定要删除这个课程吗？" },
+            class: "btn-danger" do %>
+          <%= lucide_icon "trash-2", class: "w-5 h-5 mr-2" %>
+          删除
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Course Content -->
+  <div class="card bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+    <div class="card-body">
+      <div class="space-y-6">
+        <!-- 基本信息 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Name -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">课程名称</label>
+            <div class="text-lg font-medium text-gray-900 dark:text-gray-100"><%= @course.name %></div>
+          </div>
+
+          <!-- Slug -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">URL Slug</label>
+            <div class="text-lg font-mono text-gray-600 dark:text-gray-400"><%= @course.slug %></div>
+          </div>
+
+
+
+          <!-- Status -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">状态</label>
+            <span class="badge badge-<%= @course.status == 'active' ? 'success' : 'secondary' %>">
+              <%= @course.status == 'active' ? '上线' : '下线' %>
+            </span>
+          </div>
+
+          <!-- Position -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">排序位置</label>
+            <div class="text-lg font-medium text-gray-900 dark:text-gray-100"><%= @course.position %></div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">课程描述</label>
+          <div class="prose prose-gray dark:prose-invert max-w-none">
+            <%= simple_format(@course.description) %>
+          </div>
+        </div>
+
+        <!-- 三档价格系统 -->
+        <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-4">三档价格系统</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- 原价 -->
+            <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+              <div class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">原价</div>
+              <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                <% if @course.original_price.present? %>
+                  ¥<%= sprintf('%.0f', @course.original_price) %>
+                <% else %>
+                  <span class="text-gray-400 text-base">未设置</span>
+                <% end %>
+              </div>
+              <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">显示为删除线</div>
+            </div>
+
+            <!-- 现价 -->
+            <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <div class="text-sm font-medium text-blue-600 dark:text-blue-400 mb-2">现价</div>
+              <div class="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                <% if @course.current_price.present? %>
+                  ¥<%= sprintf('%.0f', @course.current_price) %>
+                <% else %>
+                  <span class="text-gray-400 text-base">未设置</span>
+                <% end %>
+              </div>
+              <div class="text-xs text-blue-600 dark:text-blue-400 mt-1">中等字号显示</div>
+            </div>
+
+            <!-- 早鸟价 -->
+            <div class="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border-2 border-yellow-300 dark:border-yellow-700">
+              <div class="text-sm font-medium text-yellow-700 dark:text-yellow-400 mb-2 flex items-center">
+                <%= lucide_icon "zap", class: "w-4 h-4 mr-1" %>
+                早鸟特惠价
+              </div>
+              <div class="text-3xl font-bold text-yellow-700 dark:text-yellow-300">
+                <% if @course.early_bird_price.present? %>
+                  ¥<%= sprintf('%.0f', @course.early_bird_price) %>
+                <% else %>
+                  <span class="text-gray-400 text-base">未设置</span>
+                <% end %>
+              </div>
+              <div class="text-xs text-yellow-700 dark:text-yellow-400 mt-1 font-semibold">✨ 最突出显示（黄色大字）</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 旧版价格字段 -->
+        <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-4">旧版价格字段</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Annual price -->
+            <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">订阅制年价</div>
+              <div class="text-xl font-bold text-gray-900 dark:text-gray-100">
+                <% if @course.annual_price.present? %>
+                  ¥<%= sprintf('%.2f', @course.annual_price) %>
+                <% else %>
+                  <span class="text-gray-400 text-base">未设置</span>
+                <% end %>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+
+        <!-- Metadata -->
+        <div class="pt-6 border-t border-gray-200 dark:border-gray-600">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">ID</label>
+              <div class="text-sm text-gray-900 dark:text-gray-100 font-mono"><%= @course.id %></div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Created</label>
+              <div class="text-sm text-gray-600 dark:text-gray-400">
+                <%= @course.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+                <span class="text-gray-400">(<%= time_ago_in_words(@course.created_at) %> ago)</span>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Last Updated</label>
+              <div class="text-sm text-gray-600 dark:text-gray-400">
+                <%= @course.updated_at.strftime("%B %d, %Y at %I:%M %p") %>
+                <span class="text-gray-400">(<%= time_ago_in_words(@course.updated_at) %> ago)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

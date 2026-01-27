@@ -34,6 +34,12 @@ class Chapter < ApplicationRecord
       '高级' => 'gaoji',
       '实战' => 'shizhan',
       '进阶' => 'jinjie',
+      '构建' => 'goujian',
+      '部署' => 'bushu',
+      '增长' => 'zengzhang',
+      '大模型' => 'damoxing',
+      '供应商' => 'gongyingshang',
+      '提示词' => 'tishici',
       '的' => '-'
     }
     

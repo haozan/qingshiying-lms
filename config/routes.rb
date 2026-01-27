@@ -105,6 +105,7 @@ Rails.application.routes.draw do
 
   # Do not write business logic at admin dashboard
   namespace :admin do
+    resources :courses
     resources :offline_bookings do
       member do
         post :mark_no_show

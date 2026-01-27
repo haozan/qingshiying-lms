@@ -49,14 +49,7 @@ class Course < ApplicationRecord
     result.parameterize
   end
 
-  # 课程类型（已统一为永久内容+一年线下，保留方法以兼容旧代码）
-  def subscription?
-    true  # 所有课程统一模式
-  end
 
-  def buyout?
-    false  # 不再使用买断模式
-  end
 
   # 是否为免费课程
   def free?

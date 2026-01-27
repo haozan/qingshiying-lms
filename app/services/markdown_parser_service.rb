@@ -45,14 +45,10 @@ class MarkdownParserService < ApplicationService
   def sync_course(course_dir, position = 0)
     course_name = extract_name_from_path(File.basename(course_dir))
     
-    # 判断课程类型(从文件夹名称推断)
-    course_type = infer_course_type(course_name)
-    
     # 使用完整名称作为slug的基础,避免冲突
     slug_base = course_name
     course = Course.find_or_initialize_by(name: course_name)
     course.assign_attributes(
-      course_type: course_type,
       position: position,
       status: 'active'
     )
@@ -70,9 +66,9 @@ class MarkdownParserService < ApplicationService
   def sync_chapter(course, chapter_dir, position = 0)
     chapter_name = extract_name_from_path(File.basename(chapter_dir))
     
-    chapter = course.chapters.find_or_initialize_by(slug: chapter_name.parameterize)
+    # 使用 name 查找,让 FriendlyId 自动生成 slug
+    chapter = course.chapters.find_or_initialize_by(name: chapter_name)
     chapter.assign_attributes(
-      name: chapter_name,
       position: position
     )
     chapter.save!
@@ -92,9 +88,9 @@ class MarkdownParserService < ApplicationService
     
     lesson_name = frontmatter['title'] || extract_name_from_path(File.basename(lesson_file, '.md'))
     
-    lesson = chapter.lessons.find_or_initialize_by(slug: lesson_name.parameterize)
+    # 使用 name 查找,让 FriendlyId 自动生成 slug
+    lesson = chapter.lessons.find_or_initialize_by(name: lesson_name)
     lesson.assign_attributes(
-      name: lesson_name,
       content: strip_frontmatter(content),
       video_url: frontmatter['video_url'],
       free: frontmatter['free'] == true || frontmatter['free'] == 'true',
@@ -114,15 +110,7 @@ class MarkdownParserService < ApplicationService
     path.sub(/^\d+[_\-]/, '')
   end
 
-  # 推断课程类型
-  def infer_course_type(course_name)
-    # 写作运营课是买断制,其他是订阅制
-    if course_name.include?('写作') || course_name.include?('运营')
-      'buyout'
-    else
-      'subscription'
-    end
-  end
+
 
   # 解析Frontmatter
   def parse_frontmatter(content)

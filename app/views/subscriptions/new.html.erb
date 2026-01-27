@@ -78,14 +78,34 @@
             <div class="flex justify-between items-center pt-2">
               <span class="text-xl font-bold text-gray-900 dark:text-gray-50">总计</span>
               <div class="text-right">
-                <% if @course.buyout_price.present? && @course.buyout_price > @course.annual_price %>
-                  <div class="text-sm text-gray-500 line-through mb-1">¥<%= sprintf('%.0f', @course.buyout_price) %></div>
-                  <div class="flex items-center gap-2">
-                    <span class="text-3xl font-bold text-primary">¥<%= sprintf('%.0f', @price) %></span>
-                    <span class="badge-warning text-xs">特惠</span>
+                <% if @course.early_bird_price.present? %>
+                  <!-- 三档价格显示 -->
+                  <div class="space-y-1">
+                    <% if @course.original_price.present? %>
+                      <div class="text-sm text-gray-500 dark:text-gray-400 line-through">原价 ¥<%= sprintf('%.0f', @course.original_price) %></div>
+                    <% end %>
+                    <% if @course.current_price.present? %>
+                      <div class="text-base text-gray-600 dark:text-gray-300 line-through">现价 ¥<%= sprintf('%.0f', @course.current_price) %></div>
+                    <% end %>
+                    <div class="flex items-center gap-2 justify-end">
+                      <span class="text-3xl font-bold text-yellow-600 dark:text-yellow-400">¥<%= sprintf('%.0f', @course.early_bird_price) %></span>
+                      <span class="badge-warning text-xs">早鸟特惠</span>
+                    </div>
+                  </div>
+                <% elsif @course.current_price.present? %>
+                  <!-- 双档价格显示 -->
+                  <div class="space-y-1">
+                    <% if @course.original_price.present? %>
+                      <div class="text-sm text-gray-500 dark:text-gray-400 line-through">原价 ¥<%= sprintf('%.0f', @course.original_price) %></div>
+                    <% end %>
+                    <div class="flex items-center gap-2 justify-end">
+                      <span class="text-3xl font-bold text-primary">¥<%= sprintf('%.0f', @course.current_price) %></span>
+                      <span class="badge-success text-xs">优惠</span>
+                    </div>
                   </div>
                 <% else %>
-                  <span class="text-3xl font-bold text-primary">¥<%= sprintf('%.2f', @price) %></span>
+                  <!-- 单价格显示（旧价格系统回退） -->
+                  <span class="text-3xl font-bold text-primary">¥<%= sprintf('%.0f', @price) %></span>
                 <% end %>
               </div>
             </div>

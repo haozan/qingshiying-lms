@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_19_144727) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_23_025931) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -84,13 +84,14 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_19_144727) do
     t.string "name"
     t.string "slug"
     t.text "description"
-    t.string "course_type", default: "subscription"
     t.string "status", default: "active"
     t.integer "position", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.decimal "annual_price", precision: 10, scale: 2, default: "999.0"
-    t.decimal "buyout_price", precision: 10, scale: 2, default: "2999.0"
+    t.decimal "original_price", precision: 10, scale: 2
+    t.decimal "current_price", precision: 10, scale: 2
+    t.decimal "early_bird_price", precision: 10, scale: 2
     t.index ["slug"], name: "index_courses_on_slug", unique: true
   end
 
