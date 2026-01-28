@@ -1,0 +1,51 @@
+<% content_for :title, "New Product" %>
+
+<div class="container-md">
+  <div class="flex items-center space-x-4">
+    <%= link_to admin_products_path, class: "btn-ghost text-sm py-1 px-3" do %>
+      <%= lucide_icon "arrow-left", class: "w-4 h-4 mr-2" %>
+      Back to Products
+    <% end %>
+  </div>
+
+  <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50 mt-4 mb-8">Create New Product</h1>
+
+  <!-- Form -->
+  <div class="card bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+    <div class="card-body">
+      <%= form_with model: [:admin, @product], local: true, class: "space-y-6" do |form| %>
+        <!-- Title -->
+        <div class="form-group">
+          <%= form.label :title %>
+          <%= form.text_field :title, placeholder: "Enter title..." %>
+        </div>
+
+        <!-- Subtitle -->
+        <div class="form-group">
+          <%= form.label :subtitle %>
+          <%= form.text_field :subtitle, placeholder: "Enter subtitle..." %>
+        </div>
+
+        <!-- Og url -->
+        <div class="form-group">
+          <%= form.label :og_url %>
+          <%= form.text_field :og_url, placeholder: "Enter og url..." %>
+        </div>
+
+        <!-- Cover image url -->
+        <div class="form-group">
+          <%= form.label :cover_image_url %>
+          <%= form.text_field :cover_image_url, placeholder: "Enter cover image url..." %>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex justify-end space-x-3">
+          <%= link_to admin_products_path, class: "btn-ghost" do %>
+            Cancel
+          <% end %>
+          <%= form.submit "Create Product", class: "btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,63 @@
+<div class="min-h-screen bg-surface">
+  <!-- Hero Section -->
+  <section class="py-16 bg-surface-elevated border-b border-border">
+    <div class="container-xl mx-auto px-6">
+      <div class="text-center max-w-3xl mx-auto">
+        <h1 class="text-4xl sm:text-5xl font-light text-base-content mb-4">
+          青狮出品
+        </h1>
+        <p class="text-lg text-base-content/70">
+          探索我们的软件作品集
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Grid -->
+  <section class="py-16">
+    <div class="container-xl mx-auto px-6">
+      <% if @products.any? %>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <% @products.each do |product| %>
+            <div class="card bg-base-100 border border-border hover:shadow-lg transition-shadow duration-300">
+              <!-- Cover Image -->
+              <% if product.cover_url.present? %>
+                <figure class="aspect-video bg-base-200">
+                  <img 
+                    src="<%= product.cover_url %>" 
+                    alt="<%= product.title %>" 
+                    class="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </figure>
+              <% else %>
+                <figure class="aspect-video bg-base-200 flex items-center justify-center">
+                  <%= lucide_icon "image", class: "w-16 h-16 text-base-content/20" %>
+                </figure>
+              <% end %>
+
+              <!-- Card Content -->
+              <div class="card-body p-6">
+                <h2 class="card-title text-xl font-light text-base-content mb-2">
+                  <%= product.title %>
+                </h2>
+                <p class="text-base-content/70 text-sm">
+                  <%= product.subtitle %>
+                </p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="text-center py-16">
+          <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-base-200 mb-4">
+            <%= lucide_icon "package", class: "w-10 h-10 text-base-content/30" %>
+          </div>
+          <p class="text-lg text-base-content/70">
+            暂无作品
+          </p>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>
