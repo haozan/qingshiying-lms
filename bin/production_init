@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Production initialization script
+# Generates SECRET_KEY_BASE if not present in environment
+
+require 'yaml'
+require 'securerandom'
+
+APP_YML_PATH = File.expand_path('../config/application.yml', __dir__)
+
+def generate_secret_key
+  SecureRandom.hex(64)
+end
+
+# Read current application.yml
+if File.exist?(APP_YML_PATH)
+  config = YAML.load_file(APP_YML_PATH) || {}
+  
+  # Check if SECRET_KEY_BASE is empty or missing
+  if config['SECRET_KEY_BASE'].to_s.strip.empty?
+    # Generate new secret key
+    secret_key = generate_secret_key
+    
+    # Update the file
+    content = File.read(APP_YML_PATH)
+    updated_content = content.gsub(/^SECRET_KEY_BASE:\s*['"]?['"]?$/, "SECRET_KEY_BASE: '#{secret_key}'")
+    
+    File.write(APP_YML_PATH, updated_content)
+    puts "✅ Generated SECRET_KEY_BASE for production"
+  else
+    puts "✅ SECRET_KEY_BASE already configured"
+  end
+else
+  puts "⚠️  Warning: #{APP_YML_PATH} not found"
+end
