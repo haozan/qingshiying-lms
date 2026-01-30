@@ -2,9 +2,8 @@
 # frozen_string_literal: true
 
 # Production initialization script
-# Generates SECRET_KEY_BASE if not present in environment
+# Generates SECRET_KEY_BASE if not present in config/application.yml
 
-require 'yaml'
 require 'securerandom'
 
 APP_YML_PATH = File.expand_path('../config/application.yml', __dir__)
@@ -15,16 +14,15 @@ end
 
 # Read current application.yml
 if File.exist?(APP_YML_PATH)
-  config = YAML.load_file(APP_YML_PATH) || {}
+  content = File.read(APP_YML_PATH)
   
-  # Check if SECRET_KEY_BASE is empty or missing
-  if config['SECRET_KEY_BASE'].to_s.strip.empty?
+  # Check if SECRET_KEY_BASE line is empty
+  if content.match?(/^SECRET_KEY_BASE:\s*['"]?['"]?\s*$/)
     # Generate new secret key
     secret_key = generate_secret_key
     
-    # Update the file
-    content = File.read(APP_YML_PATH)
-    updated_content = content.gsub(/^SECRET_KEY_BASE:\s*['"]?['"]?$/, "SECRET_KEY_BASE: '#{secret_key}'")
+    # Replace empty SECRET_KEY_BASE with generated one
+    updated_content = content.gsub(/^SECRET_KEY_BASE:\s*['"]?['"]?\s*$/, "SECRET_KEY_BASE: '#{secret_key}'")
     
     File.write(APP_YML_PATH, updated_content)
     puts "✅ Generated SECRET_KEY_BASE for production"
