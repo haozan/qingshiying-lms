@@ -6,6 +6,7 @@ class Admin::SessionsController < Admin::BaseController
     @full_render = true
   end
 
+  before_action :check_admin_session_cookie_availability, only: [:new]
   before_action :check_rate_limit, only: [:create]
 
   def new
@@ -61,5 +62,17 @@ class Admin::SessionsController < Admin::BaseController
   def first_admin?
     return true if Administrator.count.zero?
     Administrator.exists?(name: 'admin', first_login: true)
+  end
+
+  def check_admin_session_cookie_availability
+    # Check if session cookie is available (privacy + iframe mode detection)
+    if request.session.id.nil? || !cookies.key?('_clacky_app_session')
+      @privacy_iframe_mode = true
+      flash.now[:alert] = "您的浏览器可能处于隐私模式或在 iframe 中。" \
+                          "登录功能可能无法正常工作。" \
+                          "请使用右上角按钮在新窗口中打开。"
+    else
+      @privacy_iframe_mode = false
+    end
   end
 end

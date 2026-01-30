@@ -9,6 +9,22 @@
 
         <%= render 'shared/flash_messages' %>
 
+        <!-- Privacy/Iframe Mode Warning -->
+        <% if @privacy_iframe_mode %>
+          <div class="mb-4">
+            <div class="flex items-start p-4 bg-red-50 dark:bg-red-900/30 border-l-4 border-red-400 dark:border-red-500 text-red-800 dark:text-red-200">
+              <div class="flex-shrink-0 mr-3 mt-0.5">
+                <%= lucide_icon "alert-triangle", class: "w-5 h-5" %>
+              </div>
+              <div class="flex-1">
+                <p class="font-semibold mb-2">浏览器隐私模式或 iframe 环境检测</p>
+                <p class="text-sm mb-2">您的浏览器可能处于隐私模式或在 iframe 中运行，这会阻止登录功能正常工作。</p>
+                <p class="text-sm">请点击右上角的"在新窗口中打开"按钮，或直接访问管理后台链接。</p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
         <!-- First Login Hint -->
         <% if @first_login %>
           <div class="mb-4">
@@ -22,7 +38,7 @@
           </div>
         <% end %>
 
-        <%= form_tag admin_login_path do %>
+        <%= form_with url: admin_login_path, method: :post, data: { turbo: false } do |form| %>
           <div class="space-y-4">
             <!-- Username field -->
             <div class="mb-4">
