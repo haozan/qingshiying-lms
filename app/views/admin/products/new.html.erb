@@ -38,6 +38,13 @@
           <%= form.text_field :cover_image_url, placeholder: "Enter cover image url..." %>
         </div>
 
+        <!-- Link URL -->
+        <div class="form-group">
+          <%= form.label :link_url, "跳转链接" %>
+          <%= form.text_field :link_url, placeholder: "https://example.com" %>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">鼠标悬浮点击卡片时跳转的网址</p>
+        </div>
+
         <!-- Form Actions -->
         <div class="flex justify-end space-x-3">
           <%= link_to admin_products_path, class: "btn-ghost" do %>

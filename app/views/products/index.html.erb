@@ -19,35 +19,69 @@
       <% if @products.any? %>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <% @products.each do |product| %>
-            <div class="card bg-base-100 border border-border hover:shadow-lg transition-shadow duration-300">
-              <!-- Cover Image -->
-              <% if product.cover_url.present? %>
-                <figure class="aspect-video bg-base-200">
-                  <img 
-                    src="<%= h(product.cover_url) %>" 
-                    alt="<%= h(product.title) %>" 
-                    class="w-full h-full object-cover"
-                    loading="lazy"
-                    referrerpolicy="no-referrer"
-                    crossorigin="anonymous"
-                  />
-                </figure>
-              <% else %>
-                <figure class="aspect-video bg-base-200 flex items-center justify-center">
-                  <%= lucide_icon "image", class: "w-16 h-16 text-base-content/20" %>
-                </figure>
-              <% end %>
+            <% if product.link_url.present? %>
+              <a href="<%= h(product.link_url) %>" target="_blank" rel="noopener noreferrer" class="block">
+                <div class="card bg-base-100 border border-border hover:shadow-lg hover:border-primary/50 transition-all duration-300 cursor-pointer">
+                  <!-- Cover Image -->
+                  <% if product.cover_url.present? %>
+                    <figure class="aspect-video bg-base-200">
+                      <img 
+                        src="<%= h(product.cover_url) %>" 
+                        alt="<%= h(product.title) %>" 
+                        class="w-full h-full object-cover"
+                        loading="lazy"
+                        referrerpolicy="no-referrer"
+                        crossorigin="anonymous"
+                      />
+                    </figure>
+                  <% else %>
+                    <figure class="aspect-video bg-base-200 flex items-center justify-center">
+                      <%= lucide_icon "image", class: "w-16 h-16 text-base-content/20" %>
+                    </figure>
+                  <% end %>
 
-              <!-- Card Content -->
-              <div class="card-body p-6">
-                <h2 class="card-title text-xl font-light text-base-content mb-2">
-                  <%= product.title %>
-                </h2>
-                <p class="text-base-content/70 text-sm">
-                  <%= product.subtitle %>
-                </p>
+                  <!-- Card Content -->
+                  <div class="card-body p-6">
+                    <h2 class="card-title text-xl font-light text-base-content mb-2">
+                      <%= product.title %>
+                    </h2>
+                    <p class="text-base-content/70 text-sm">
+                      <%= product.subtitle %>
+                    </p>
+                  </div>
+                </div>
+              </a>
+            <% else %>
+              <div class="card bg-base-100 border border-border hover:shadow-lg transition-shadow duration-300">
+                <!-- Cover Image -->
+                <% if product.cover_url.present? %>
+                  <figure class="aspect-video bg-base-200">
+                    <img 
+                      src="<%= h(product.cover_url) %>" 
+                      alt="<%= h(product.title) %>" 
+                      class="w-full h-full object-cover"
+                      loading="lazy"
+                      referrerpolicy="no-referrer"
+                      crossorigin="anonymous"
+                    />
+                  </figure>
+                <% else %>
+                  <figure class="aspect-video bg-base-200 flex items-center justify-center">
+                    <%= lucide_icon "image", class: "w-16 h-16 text-base-content/20" %>
+                  </figure>
+                <% end %>
+
+                <!-- Card Content -->
+                <div class="card-body p-6">
+                  <h2 class="card-title text-xl font-light text-base-content mb-2">
+                    <%= product.title %>
+                  </h2>
+                  <p class="text-base-content/70 text-sm">
+                    <%= product.subtitle %>
+                  </p>
+                </div>
               </div>
-            </div>
+            <% end %>
           <% end %>
         </div>
       <% else %>
