@@ -24,10 +24,11 @@
               <% if product.cover_url.present? %>
                 <figure class="aspect-video bg-base-200">
                   <img 
-                    src="<%= product.cover_url %>" 
-                    alt="<%= product.title %>" 
+                    src="<%= h(product.cover_url) %>" 
+                    alt="<%= h(product.title) %>" 
                     class="w-full h-full object-cover"
                     loading="lazy"
+                    referrerpolicy="no-referrer"
                   />
                 </figure>
               <% else %>
