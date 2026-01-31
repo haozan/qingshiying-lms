@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_28_161339) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_31_095053) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -269,6 +269,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_28_161339) do
     t.string "cover_image_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "slug"
+    t.index ["slug"], name: "index_products_on_slug", unique: true
   end
 
   create_table "progresses", force: :cascade do |t|
