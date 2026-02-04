@@ -26,16 +26,18 @@
           <%= form.text_field :subtitle, placeholder: "Enter subtitle..." %>
         </div>
 
-        <!-- Og url -->
+        <!-- Og url (auto-fetched, readonly) -->
         <div class="form-group">
-          <%= form.label :og_url %>
-          <%= form.text_field :og_url, placeholder: "Enter og url..." %>
+          <%= form.label :og_url, "OG 图链接（自动抓取）" %>
+          <%= form.text_field :og_url, placeholder: "系统将从跳转链接自动抓取", readonly: true, class: "bg-base-200" %>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">保存时自动从跳转链接抓取，无需手动填写</p>
         </div>
 
-        <!-- Cover image url -->
+        <!-- Cover image url (fallback) -->
         <div class="form-group">
-          <%= form.label :cover_image_url %>
-          <%= form.text_field :cover_image_url, placeholder: "Enter cover image url..." %>
+          <%= form.label :cover_image_url, "封面图片链接（备用）" %>
+          <%= form.text_field :cover_image_url, placeholder: "无法抓取 OG 图时使用" %>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">仅当无法抓取到 OG 图时才使用此图片</p>
         </div>
 
         <!-- Link URL -->
