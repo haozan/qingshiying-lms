@@ -65,9 +65,9 @@
           <div class="flex items-center justify-between mb-2">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">OG Image URL</label>
             <% if @product.link_url.present? %>
-              <%= link_to refresh_og_image_admin_product_path(@product), 
+              <%= button_to refresh_og_image_admin_product_path(@product), 
                   method: :post,
-                  data: { confirm: "确定要重新抓取 OG 图片吗？当前的 og_url 将被覆盖。" },
+                  form: { data: { turbo_confirm: "确定要重新抓取 OG 图片吗？当前的 og_url 将被覆盖。" } },
                   class: "btn-sm btn-secondary inline-flex items-center" do %>
                 <%= lucide_icon "refresh-cw", class: "w-4 h-4 mr-1" %>
                 更新 OG 图
