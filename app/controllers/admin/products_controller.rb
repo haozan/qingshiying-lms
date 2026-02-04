@@ -1,5 +1,5 @@
 class Admin::ProductsController < Admin::BaseController
-  before_action :set_product, only: [:show, :edit, :update, :destroy]
+  before_action :set_product, only: [:show, :edit, :update, :destroy, :refresh_og_image]
 
   def index
     @products = Product.page(params[:page]).per(10)
@@ -36,6 +36,22 @@ class Admin::ProductsController < Admin::BaseController
   def destroy
     @product.destroy
     redirect_to admin_products_path, notice: 'Product was successfully deleted.'
+  end
+
+  def refresh_og_image
+    if @product.link_url.blank?
+      redirect_to admin_product_path(@product), alert: 'Cannot refresh OG image: link_url is blank.'
+      return
+    end
+
+    fetched_image = OgImageFetcherService.call(@product.link_url)
+
+    if fetched_image.present?
+      @product.update(og_url: fetched_image)
+      redirect_to admin_product_path(@product), notice: 'OG image was successfully refreshed.'
+    else
+      redirect_to admin_product_path(@product), alert: 'Failed to fetch OG image from the link URL.'
+    end
   end
 
   private

@@ -45,16 +45,86 @@
           <div class="text-lg font-medium text-gray-900 dark:text-gray-100"><%= @product.subtitle %></div>
         </div>
 
+        <!-- Link URL -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Link URL</label>
+          <div class="text-lg font-medium text-gray-900 dark:text-gray-100 break-all">
+            <% if @product.link_url.present? %>
+              <a href="<%= @product.link_url %>" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">
+                <%= @product.link_url %>
+                <%= lucide_icon "external-link", class: "w-4 h-4 inline ml-1" %>
+              </a>
+            <% else %>
+              <span class="text-gray-400 dark:text-gray-500 italic">No link URL</span>
+            <% end %>
+          </div>
+        </div>
+
         <!-- Og url -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Og url</label>
-          <div class="text-lg font-medium text-gray-900 dark:text-gray-100"><%= @product.og_url %></div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">OG Image URL</label>
+            <% if @product.link_url.present? %>
+              <%= link_to refresh_og_image_admin_product_path(@product), 
+                  method: :post,
+                  data: { confirm: "确定要重新抓取 OG 图片吗？当前的 og_url 将被覆盖。" },
+                  class: "btn-sm btn-secondary inline-flex items-center" do %>
+                <%= lucide_icon "refresh-cw", class: "w-4 h-4 mr-1" %>
+                更新 OG 图
+              <% end %>
+            <% end %>
+          </div>
+          <div class="text-sm text-gray-900 dark:text-gray-100 break-all mb-2">
+            <% if @product.og_url.present? %>
+              <%= @product.og_url %>
+            <% else %>
+              <span class="text-gray-400 dark:text-gray-500 italic">No OG image URL</span>
+            <% end %>
+          </div>
+          <% if @product.og_url.present? %>
+            <div class="mt-2">
+              <img src="<%= @product.og_url %>" 
+                   alt="OG Image Preview" 
+                   class="max-w-md rounded border border-gray-300 dark:border-gray-600"
+                   onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+              <div class="text-sm text-red-600 dark:text-red-400 hidden">⚠️ 图片加载失败</div>
+            </div>
+          <% end %>
         </div>
 
         <!-- Cover image url -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cover image url</label>
-          <div class="text-lg font-medium text-gray-900 dark:text-gray-100"><%= @product.cover_image_url %></div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Manual Cover Image URL</label>
+          <div class="text-sm text-gray-900 dark:text-gray-100 break-all mb-2">
+            <% if @product.cover_image_url.present? %>
+              <%= @product.cover_image_url %>
+            <% else %>
+              <span class="text-gray-400 dark:text-gray-500 italic">No manual cover image URL</span>
+            <% end %>
+          </div>
+          <% if @product.cover_image_url.present? %>
+            <div class="mt-2">
+              <img src="<%= @product.cover_image_url %>" 
+                   alt="Manual Cover Image Preview" 
+                   class="max-w-md rounded border border-gray-300 dark:border-gray-600"
+                   onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+              <div class="text-sm text-red-600 dark:text-red-400 hidden">⚠️ 图片加载失败</div>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Actual Cover URL Used -->
+        <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+          <label class="block text-sm font-medium text-blue-700 dark:text-blue-300 mb-2">
+            <%= lucide_icon "image", class: "w-4 h-4 inline mr-1" %>
+            当前使用的封面图
+          </label>
+          <div class="text-sm text-blue-900 dark:text-blue-100">
+            优先级：OG Image URL > Manual Cover Image URL
+          </div>
+          <div class="text-sm text-blue-900 dark:text-blue-100 break-all mt-2 font-mono">
+            <%= @product.cover_url || '无' %>
+          </div>
         </div>
 
         <!-- Metadata -->
