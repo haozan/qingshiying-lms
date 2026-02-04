@@ -31,8 +31,10 @@
     <meta property="og:site_name" content="<%= Rails.application.config.x.appname %>">
     <meta property="og:description" content="<%= @page_description || '立即开启你的人生蜕变 - 在青狮营 2.0，带你开启 AI 时代的人生蜕变。' %>">
     <meta property="og:image" content="<%= request.base_url + asset_path('og-image.png') %>">
+    <meta property="og:image:type" content="image/png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="<%= Rails.application.config.x.appname %> - <%= @page_description || '立即开启你的人生蜕变' %>">
     <meta property="og:url" content="<%= request.original_url %>">
     
     <!-- Twitter Card Meta Tags -->
