@@ -1,51 +1,18 @@
 <footer class="bg-surface border-t border-border">
   <div class="mx-auto max-w-7xl px-6 py-12 lg:px-8">
-    <div class="grid grid-cols-1 gap-8 lg:grid-cols-4">
-      <!-- Brand Section -->
-      <div class="lg:col-span-1">
-        <div class="flex items-center gap-3 mb-4">
-          <%= image_tag "qinglion-logo.png", class: "w-8 h-8", alt: "青狮营" %>
-          <span class="text-xl font-bold text-base-content">青狮营</span>
-        </div>
-        <p class="text-sm text-base-content/70">
-          专为法律人打造的 AI 实战训练营
-        </p>
+    <!-- Brand Section -->
+    <div class="text-center">
+      <div class="flex items-center gap-3 mb-4 justify-center">
+        <%= image_tag "qinglion-logo.png", class: "w-8 h-8", alt: "青狮营" %>
+        <span class="text-xl font-bold text-base-content">青狮营</span>
       </div>
-
-      <!-- Quick Links -->
-      <div>
-        <h3 class="text-sm font-semibold text-base-content mb-4">快速链接</h3>
-        <ul class="space-y-3">
-          <li>
-            <%= link_to "全部课程", courses_path, class: "text-sm text-base-content/70 hover:text-primary transition-colors" %>
-          </li>
-          <% if current_user %>
-            <li>
-              <%= link_to "我的进度", dashboard_progresses_path, class: "text-sm text-base-content/70 hover:text-primary transition-colors" %>
-            </li>
-            <li>
-              <%= link_to "个人资料", profile_path, class: "text-sm text-base-content/70 hover:text-primary transition-colors" %>
-            </li>
-          <% end %>
-        </ul>
-      </div>
-
-      <!-- About -->
-      <div>
-        <h3 class="text-sm font-semibold text-base-content mb-4">关于创始人</h3>
-        <p class="text-sm text-base-content/70 mb-4">
-          添加镐赞微信
-        </p>
-        <div class="w-32 h-32 bg-base-content/5 border border-border rounded-lg flex items-center justify-center">
-          <%= image_tag "qr-code.png", class: "w-full h-full object-contain p-2", alt: "联系二维码" %>
-        </div>
-      </div>
-
-
+      <p class="text-sm text-base-content/70">
+        专为法律人打造的 AI 实战训练营
+      </p>
     </div>
 
     <!-- Bottom Bar -->
-    <div class="mt-12 pt-8 border-t border-border">
+    <div class="mt-8 pt-8 border-t border-border">
       <p class="text-sm text-base-content/60 text-center">
         © <%= Time.current.year %> 青狮营. 保留所有权利。
       </p>

@@ -8,4 +8,10 @@
 
 <%= link_to "线下预约", offline_bookings_path, class: "block px-3 py-2 md:p-0 rounded-lg md:rounded-none hover:bg-surface md:hover:bg-transparent text-secondary hover:text-primary transition-colors #{'font-semibold text-primary bg-surface/50 md:bg-transparent' if current_page?(offline_bookings_path)}" %>
 
-<%= link_to "青狮出品", products_path, class: "block px-3 py-2 md:p-0 rounded-lg md:rounded-none hover:bg-surface md:hover:bg-transparent text-secondary hover:text-primary transition-colors #{'font-semibold text-primary bg-surface/50 md:bg-transparent' if current_page?(products_path)}" %>
+<%= link_to products_path, class: "block px-3 py-2 md:p-0 rounded-lg md:rounded-none hover:bg-surface md:hover:bg-transparent transition-colors #{'font-semibold bg-surface/50 md:bg-transparent' if current_page?(products_path)}" do %>
+  <span class="inline-flex items-center gap-1.5 text-secondary hover:text-primary #{'text-primary' if current_page?(products_path)}">
+    <%= lucide_icon "sparkles", class: "w-4 h-4 text-orange-500" %>
+    <span class="font-semibold">青狮出品</span>
+    <span class="badge badge-xs bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 px-1.5 py-0.5">NEW</span>
+  </span>
+<% end %>
