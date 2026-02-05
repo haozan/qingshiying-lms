@@ -44,9 +44,25 @@
                     <h2 class="card-title text-xl font-light text-base-content mb-2">
                       <%= product.title %>
                     </h2>
-                    <p class="text-base-content/70 text-sm">
+                    <p class="text-base-content/70 text-sm line-clamp-2">
                       <%= product.subtitle %>
                     </p>
+                    <% status = product.launch_status %>
+                    <% if status.present? %>
+                      <div class="mt-3 pt-3 border-t border-border">
+                        <% if status[:type] == :launched %>
+                          <div class="badge badge-success gap-1 px-3 py-2">
+                            <%= lucide_icon "check-circle", class: "w-4 h-4" %>
+                            <span class="font-medium"><%= status[:days] %>天稳定运行</span>
+                          </div>
+                        <% elsif status[:type] == :testing %>
+                          <div class="badge badge-neutral gap-1 px-3 py-2">
+                            <%= lucide_icon "flask-conical", class: "w-4 h-4" %>
+                            <span class="font-medium">测试中</span>
+                          </div>
+                        <% end %>
+                      </div>
+                    <% end %>
                   </div>
                 </div>
               </a>
@@ -74,9 +90,25 @@
                   <h2 class="card-title text-xl font-light text-base-content mb-2">
                     <%= product.title %>
                   </h2>
-                  <p class="text-base-content/70 text-sm">
+                  <p class="text-base-content/70 text-sm line-clamp-2">
                     <%= product.subtitle %>
                   </p>
+                  <% status = product.launch_status %>
+                  <% if status.present? %>
+                    <div class="mt-3 pt-3 border-t border-border">
+                      <% if status[:type] == :launched %>
+                        <div class="badge badge-success gap-1 px-3 py-2">
+                          <%= lucide_icon "check-circle", class: "w-4 h-4" %>
+                          <span class="font-medium"><%= status[:days] %>天稳定运行</span>
+                        </div>
+                      <% elsif status[:type] == :testing %>
+                        <div class="badge badge-neutral gap-1 px-3 py-2">
+                          <%= lucide_icon "flask-conical", class: "w-4 h-4" %>
+                          <span class="font-medium">测试中</span>
+                        </div>
+                      <% end %>
+                    </div>
+                  <% end %>
                 </div>
               </div>
             <% end %>

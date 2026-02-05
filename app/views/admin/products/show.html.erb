@@ -135,6 +135,22 @@
               <div class="text-sm text-gray-900 dark:text-gray-100 font-mono"><%= @product.id %></div>
             </div>
             <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">上线时间</label>
+              <div class="text-sm text-gray-600 dark:text-gray-400">
+                <% if @product.launch_date.present? %>
+                  <%= @product.launch_date.strftime("%Y年%m月%d日") %>
+                  <% if @product.days_since_launch.present? && @product.days_since_launch > 0 %>
+                    <span class="ml-2 badge badge-success badge-sm">
+                      <%= lucide_icon "check-circle", class: "w-3 h-3 inline" %>
+                      <%= @product.days_since_launch %>天稳定运行
+                    </span>
+                  <% end %>
+                <% else %>
+                  <span class="text-gray-400 dark:text-gray-500 italic">未设置</span>
+                <% end %>
+              </div>
+            </div>
+            <div>
               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Created</label>
               <div class="text-sm text-gray-600 dark:text-gray-400">
                 <%= @product.created_at.strftime("%B %d, %Y at %I:%M %p") %>

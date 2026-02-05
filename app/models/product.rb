@@ -17,6 +17,22 @@ class Product < ApplicationRecord
     og_url.presence || cover_image_url.presence
   end
 
+  # Calculate days since launch
+  def days_since_launch
+    return nil unless launch_date.present?
+    (Date.today - launch_date).to_i
+  end
+
+  # Get launch status for display
+  def launch_status
+    if launch_date.present?
+      days = days_since_launch
+      { type: :launched, days: days } if days && days > 0
+    else
+      { type: :testing }
+    end
+  end
+
   private
 
   def fetch_og_image

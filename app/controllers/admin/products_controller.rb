@@ -61,6 +61,6 @@ class Admin::ProductsController < Admin::BaseController
   end
 
   def product_params
-    params.require(:product).permit(:title, :subtitle, :og_url, :cover_image_url, :link_url)
+    params.require(:product).permit(:title, :subtitle, :og_url, :cover_image_url, :link_url, :launch_date)
   end
 end

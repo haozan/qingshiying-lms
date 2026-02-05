@@ -47,6 +47,13 @@
           <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">鼠标悬浮点击卡片时跳转的网址</p>
         </div>
 
+        <!-- Launch Date -->
+        <div class="form-group">
+          <%= form.label :launch_date, "上线时间" %>
+          <%= form.date_field :launch_date, class: "form-input" %>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">产品上线日期，用于计算稳定运行天数</p>
+        </div>
+
         <!-- Form Actions -->
         <div class="flex justify-end space-x-3">
           <%= link_to admin_product_path(@product.id), class: "btn-ghost" do %>
