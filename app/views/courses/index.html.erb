@@ -135,17 +135,46 @@
                 </div>
               <% end %>
 
+              <!-- 课程权益 -->
+              <% unless course.free? %>
+                <div class="text-sm text-muted space-y-2 mb-4">
+                  <div class="flex items-center gap-2">
+                    <%= lucide_icon "infinity", class: "w-4 h-4" %>
+                    <span>课程内容永久查阅</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <%= lucide_icon "calendar", class: "w-4 h-4" %>
+                    <span>一年内可预约线下面授</span>
+                  </div>
+                </div>
+              <% end %>
+
               <!-- 订阅状态 -->
               <% if @subscriptions[course.id]&.active? %>
                 <%= link_to course_path(course), class: "btn-primary w-full flex items-center justify-center gap-2" do %>
                   <%= lucide_icon "play-circle", class: "w-5 h-5" %>
                   <span>继续学习</span>
                 <% end %>
-                <% else %>
-                <%= link_to course_path(course), class: "btn-outline w-full flex items-center justify-center gap-2 group-hover:btn-primary transition-all" do %>
-                  <%= lucide_icon "eye", class: "w-5 h-5" %>
-                  <span>查看详情</span>
-                <% end %>
+              <% else %>
+                <div class="space-y-2">
+                  <% if current_user %>
+                    <!-- 已登录：直接购买 -->
+                    <%= button_to purchase_course_path(course), method: :post, class: "btn-primary w-full flex items-center justify-center gap-2", data: { turbo: false } do %>
+                      <%= lucide_icon "shopping-cart", class: "w-5 h-5" %>
+                      <span>立即购买</span>
+                    <% end %>
+                  <% else %>
+                    <!-- 未登录：跳转到登录页 -->
+                    <%= link_to sign_in_path, class: "btn-primary w-full flex items-center justify-center gap-2" do %>
+                      <%= lucide_icon "log-in", class: "w-5 h-5" %>
+                      <span>登录后购买</span>
+                    <% end %>
+                  <% end %>
+                  <%= link_to course_path(course), class: "btn-outline w-full flex items-center justify-center gap-2" do %>
+                    <%= lucide_icon "eye", class: "w-5 h-5" %>
+                    <span>查看详情</span>
+                  <% end %>
+                </div>
               <% end %>
             </div>
           </div>
@@ -161,14 +190,38 @@
         <!-- Card: Bundle Offer -->
         <div class="card bg-gradient-to-br from-primary/15 to-secondary/15 border-2 border-primary">
           <div class="card-body">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <div class="flex items-center gap-3">
-                <%= lucide_icon "gift", class: "w-7 h-7 text-primary" %>
-                <h3 class="text-lg font-bold text-primary">3 课联报 特惠</h3>
+            <div class="flex items-center gap-3 mb-4">
+              <%= lucide_icon "gift", class: "w-7 h-7 text-primary" %>
+              <h3 class="text-xl font-bold text-primary">3 课联报 特惠</h3>
+            </div>
+            
+            <!-- 价格信息 -->
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-muted">原价</span>
+                <span class="text-base text-muted line-through">￥15000 元</span>
               </div>
-              <div class="flex flex-wrap items-center gap-2">
-                <p class="text-lg text-base-content/50 line-through">原价 ￥15000 元</p>
-                <p class="text-lg font-bold text-primary">￥12000 元（支持公户付款）</p>
+              
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-medium text-foreground">现价</span>
+                <span class="text-xl font-semibold text-primary">￥12000 元</span>
+              </div>
+              
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-medium text-orange-600 dark:text-orange-400 flex items-center gap-1">
+                  <%= lucide_icon "zap", class: "w-3 h-3" %>
+                  早鸟价
+                </span>
+                <div class="flex items-center gap-2">
+                  <span class="text-2xl font-bold text-orange-600 dark:text-orange-400">￥9000 元</span>
+                  <span class="badge badge-sm bg-red-500 text-white border-0">
+                    立减￥3000
+                  </span>
+                </div>
+              </div>
+              
+              <div class="mt-2 pt-3 border-t border-border">
+                <p class="text-sm font-medium text-base-content/80">支持公户付款</p>
               </div>
             </div>
           </div>
@@ -183,6 +236,12 @@
               <%= lucide_icon "arrow-down", class: "w-4 h-4" %>
             </span>
           </p>
+          <!-- QR Code -->
+          <div class="mt-6 flex justify-center">
+            <div class="w-48 h-48 bg-base-content/5 border-2 border-border rounded-lg flex items-center justify-center shadow-lg">
+              <%= image_tag "qr-code.png", class: "w-full h-full object-contain p-3", alt: "联系创始人镐赞" %>
+            </div>
+          </div>
         </div>
       </div>
     </div>

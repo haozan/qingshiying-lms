@@ -60,4 +60,43 @@ class Course < ApplicationRecord
   def has_offline_class?
     name.include?('AI 编程课') || name.include?('编程')
   end
+
+  # Stripe 支付集成方法
+  # 返回 Stripe 支付线条目
+  def stripe_line_items
+    price = early_bird_price.presence || current_price.presence || annual_price
+    [
+      {
+        price_data: {
+          currency: 'cny',
+          product_data: {
+            name: name,
+            description: description.presence || "青狮营课程"
+          },
+          unit_amount: (price * 100).to_i
+        },
+        quantity: 1
+      }
+    ]
+  end
+
+  # 支付模式：一次性支付
+  def stripe_mode
+    'payment'
+  end
+
+  # 客户信息（Payment 模型会优先使用 user 信息）
+  def customer_name
+    "青狮营学员"
+  end
+
+  def customer_email
+    # Payment 模型会使用 user.email
+    nil
+  end
+
+  # 支付描述
+  def payment_description
+    "青狮营 - #{name}"
+  end
 end

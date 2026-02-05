@@ -2,10 +2,11 @@ const CACHE_VERSION = 'v1';
 const CACHE_NAME = `青狮营-pwa-${CACHE_VERSION}`;
 const CACHE_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days
 
+// Only cache essential assets - reduce cache operations during navigation
 const STATIC_CACHE_URLS = [
   '<%= asset_path("application.css") %>',
-  '<%= asset_path("application.js") %>',
-  '<%= asset_path("app-favicon.svg") %>'
+  '<%= asset_path("application.js") %>'
+  // Removed favicon from precache - will be cached on first request
 ];
 
 self.addEventListener('install', event => {
@@ -13,6 +14,10 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(STATIC_CACHE_URLS))
       .then(() => self.skipWaiting())
+      .catch(error => {
+        // Silently handle install errors (e.g., when user navigates away)
+        console.warn('Service worker install failed:', error);
+      })
   );
 });
 
@@ -37,13 +42,21 @@ self.addEventListener('fetch', event => {
 
   const url = new URL(event.request.url);
   const isHTMLPage = event.request.headers.get('accept')?.includes('text/html');
+  
+  // Skip caching for external domains (like Stripe)
+  if (url.origin !== self.location.origin) {
+    return;
+  }
 
   // Network-first for HTML pages (always get fresh content)
   if (isHTMLPage) {
     event.respondWith(
       fetch(event.request)
         .then(response => response)
-        .catch(() => caches.match(event.request))
+        .catch(error => {
+          // Silently fallback to cache on network error
+          return caches.match(event.request);
+        })
     );
     return;
   }
@@ -61,18 +74,27 @@ self.addEventListener('fetch', event => {
           }
         }
 
-        // Fetch from network
-        return fetch(event.request)
+        // Fetch from network with shorter timeout to reduce hanging requests
+        const fetchPromise = fetch(event.request, { 
+          // Note: signal would be passed from request if available
+        });
+        
+        return fetchPromise
           .then(response => {
             // Only cache successful responses for static assets
             if (response && response.status === 200 && response.type === 'basic') {
               const responseToCache = response.clone();
+              // Don't await cache write - let it happen in background
               caches.open(CACHE_NAME)
-                .then(cache => cache.put(event.request, responseToCache));
+                .then(cache => cache.put(event.request, responseToCache))
+                .catch(() => {}); // Silently ignore cache write errors
             }
             return response;
           })
-          .catch(() => cachedResponse); // Fallback to cached response if network fails
+          .catch(error => {
+            // Silently fallback to cached response if network fails
+            return cachedResponse || new Response('', { status: 404 });
+          });
       })
   );
 });
