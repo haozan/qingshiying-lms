@@ -1,0 +1,50 @@
+<div class="min-h-screen bg-surface">
+  <div class="container-xl mx-auto px-6 py-12">
+    <h1 class="text-3xl font-bold text-base-content mb-4"><%= @course_bundle.name %></h1>
+    <p class="text-base-content/70 mb-8"><%= @course_bundle.description %></p>
+    
+    <div class="card bg-base-100 border border-border mb-8">
+      <div class="card-body">
+        <h3 class="text-xl font-semibold mb-4">价格信息</h3>
+        
+        <% if @course_bundle.original_price.present? %>
+          <p>原价: ￥<%= number_with_precision(@course_bundle.original_price, precision: 0) %></p>
+        <% end %>
+        
+        <% if @course_bundle.current_price.present? %>
+          <p>现价: ￥<%= number_with_precision(@course_bundle.current_price, precision: 0) %></p>
+        <% end %>
+        
+        <% if @course_bundle.early_bird_price.present? %>
+          <p class="text-2xl font-bold text-primary mt-2">
+            早鸟价: ￥<%= number_with_precision(@course_bundle.early_bird_price, precision: 0) %>
+          </p>
+        <% end %>
+        
+        <div class="card-actions justify-end mt-6">
+          <% if @bundle_subscription %>
+            <div class="btn-success">已购买</div>
+          <% elsif current_user %>
+            <%= button_to "立即购买", purchase_course_bundle_path(@course_bundle), method: :post, class: "btn-primary", data: { turbo: false } %>
+          <% else %>
+            <%= link_to "登录后购买", sign_in_path, class: "btn-primary" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card bg-base-100 border border-border">
+      <div class="card-body">
+        <h3 class="text-xl font-semibold mb-4">包含课程</h3>
+        <ul class="space-y-2">
+          <% @course_bundle.courses.each do |course| %>
+            <li class="flex items-center gap-2">
+              <%= lucide_icon "check-circle", class: "w-5 h-5 text-success" %>
+              <span><%= course.name %></span>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

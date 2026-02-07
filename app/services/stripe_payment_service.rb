@@ -292,6 +292,15 @@ class StripePaymentService < ApplicationService
       
       Rails.logger.info "订阅激活: #{subscription.course.name} (用户: #{subscription.user.email})"
       
+    when 'BundleSubscription'
+      bundle_subscription = payment.payable
+      
+      # 激活套餐订阅并创建所有课程订阅
+      bundle_subscription.activate!
+      
+      Rails.logger.info "套餐订阅激活: #{bundle_subscription.course_bundle.name} (用户: #{bundle_subscription.user.email})"
+      Rails.logger.info "已创建 #{bundle_subscription.course_bundle.courses.count} 个课程订阅"
+      
       # TODO: 发送订阅确认邮件
       # UserMailer.subscription_activated(subscription).deliver_later
     end

@@ -14,9 +14,8 @@ class PaymentsController < ApplicationController
     result = stripe_service.call
 
     if result[:success]
-      @checkout_url = result[:checkout_session].url
-      # Render turbo stream to redirect to Stripe checkout
-      render formats: [:turbo_stream]
+      # Redirect to Stripe checkout page
+      redirect_to result[:checkout_session].url, allow_other_host: true
     else
       flash[:alert] = "Payment initialization failed: #{result[:error]}"
       redirect_to root_path

@@ -84,13 +84,13 @@ class Payment < ApplicationRecord
   end
 
   def customer_email
-    user&.email || payable.customer_email
+    user&.email || payable&.customer_email
   end
 
   # Product description for Stripe checkout
   # Payable MUST implement payment_description method
   def product_description
-      payable.payment_description
+    payable&.payment_description || "已删除的订单"
   end
 
   # Amount helpers
@@ -116,7 +116,7 @@ class Payment < ApplicationRecord
   end
 
   def subscription_payment?
-    payable.stripe_mode == 'subscription'
+    payable&.stripe_mode == 'subscription'
   end
 
   def summary

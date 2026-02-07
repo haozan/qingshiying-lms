@@ -102,6 +102,7 @@ class User < ApplicationRecord
 
   # Course-related associations
   has_many :subscriptions, dependent: :destroy
+  has_many :bundle_subscriptions, dependent: :destroy
   has_many :courses, through: :subscriptions
   has_many :progresses, dependent: :destroy
   has_many :homeworks, dependent: :destroy

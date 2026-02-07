@@ -1,0 +1,63 @@
+<% content_for :title, "New Course bundle" %>
+
+<div class="container-md">
+  <div class="flex items-center space-x-4">
+    <%= link_to admin_course_bundles_path, class: "btn-ghost text-sm py-1 px-3" do %>
+      <%= lucide_icon "arrow-left", class: "w-4 h-4 mr-2" %>
+      Back to Course bundles
+    <% end %>
+  </div>
+
+  <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50 mt-4 mb-8">Create New Course bundle</h1>
+
+  <!-- Form -->
+  <div class="card bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+    <div class="card-body">
+      <%= form_with model: [:admin, @course_bundle], local: true, class: "space-y-6" do |form| %>
+        <!-- Name -->
+        <div class="form-group">
+          <%= form.label :name %>
+          <%= form.text_field :name, placeholder: "Enter name..." %>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <%= form.label :description %>
+          <%= form.text_area :description, rows: 5, placeholder: "Enter description..." %>
+        </div>
+
+        <!-- Original price -->
+        <div class="form-group">
+          <%= form.label :original_price %>
+          <%= form.number_field :original_price, placeholder: "Enter original price..." %>
+        </div>
+
+        <!-- Current price -->
+        <div class="form-group">
+          <%= form.label :current_price %>
+          <%= form.number_field :current_price, placeholder: "Enter current price..." %>
+        </div>
+
+        <!-- Early bird price -->
+        <div class="form-group">
+          <%= form.label :early_bird_price %>
+          <%= form.number_field :early_bird_price, placeholder: "Enter early bird price..." %>
+        </div>
+
+        <!-- Status -->
+        <div class="form-group">
+          <%= form.label :status %>
+          <%= form.text_field :status, placeholder: "Enter status..." %>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex justify-end space-x-3">
+          <%= link_to admin_course_bundles_path, class: "btn-ghost" do %>
+            Cancel
+          <% end %>
+          <%= form.submit "Create Course bundle", class: "btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

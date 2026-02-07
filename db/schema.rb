@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_04_080134) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_05_051844) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -69,6 +69,17 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_04_080134) do
     t.index ["role"], name: "index_administrators_on_role"
   end
 
+  create_table "bundle_subscriptions", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "course_bundle_id"
+    t.string "status", default: "pending"
+    t.datetime "started_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_bundle_id"], name: "index_bundle_subscriptions_on_course_bundle_id"
+    t.index ["user_id"], name: "index_bundle_subscriptions_on_user_id"
+  end
+
   create_table "chapters", force: :cascade do |t|
     t.bigint "course_id"
     t.string "name"
@@ -78,6 +89,27 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_04_080134) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["course_id"], name: "index_chapters_on_course_id"
+  end
+
+  create_table "course_bundle_items", force: :cascade do |t|
+    t.bigint "course_bundle_id"
+    t.bigint "course_id"
+    t.integer "position", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_bundle_id"], name: "index_course_bundle_items_on_course_bundle_id"
+    t.index ["course_id"], name: "index_course_bundle_items_on_course_id"
+  end
+
+  create_table "course_bundles", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.decimal "original_price"
+    t.decimal "current_price"
+    t.decimal "early_bird_price"
+    t.string "status", default: "active"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "courses", force: :cascade do |t|

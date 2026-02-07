@@ -248,3 +248,30 @@ puts "  - Courses: #{Course.count}"
 puts "  - Chapters: #{Chapter.count}"
 puts "  - Lessons: #{Lesson.count}"
 puts "  - Writing course lessons: #{writing_course.chapters.includes(:lessons).map(&:lessons).flatten.count}"
+
+# 创建 3 课联报套餐
+if Rails.env.development? || Rails.env.test?
+  puts "\nCreating course bundle..."
+  
+  bundle = CourseBundle.find_or_create_by!(name: "3 课联报特惠") do |b|
+    b.description = "一次性购买所有课程，享受超值优惠！包含：AI课程、写作运营课、AI编程课"
+    b.original_price = 30000.00
+    b.current_price = 15000.00
+    b.early_bird_price = 9000.00
+    b.status = 'active'
+  end
+  
+  # 清理现有关联
+  bundle.course_bundle_items.destroy_all
+  
+  # 添加所有课程到套餐
+  [ai_course, writing_course, programming_course].each_with_index do |course, index|
+    bundle.course_bundle_items.create!(
+      course: course,
+      position: index + 1
+    )
+  end
+  
+  puts "  - Course Bundles: #{CourseBundle.count}"
+  puts "  - Bundle includes #{bundle.courses.count} courses: #{bundle.courses.pluck(:name).join(', ')}"
+end

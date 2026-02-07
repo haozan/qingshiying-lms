@@ -1,0 +1,30 @@
+<div class="min-h-screen bg-surface">
+  <div class="container-xl mx-auto px-6 py-12">
+    <h1 class="text-3xl font-bold text-base-content mb-8">课程套餐</h1>
+    
+    <% if @course_bundles.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <% @course_bundles.each do |bundle| %>
+          <div class="card bg-base-100 border border-border">
+            <div class="card-body">
+              <h2 class="card-title"><%= bundle.name %></h2>
+              <p class="text-base-content/70"><%= bundle.description %></p>
+              
+              <div class="mt-4">
+                <p class="text-2xl font-bold text-primary">
+                  ￥<%= number_with_precision(bundle.early_bird_price || bundle.current_price || bundle.original_price, precision: 0) %>
+                </p>
+              </div>
+              
+              <div class="card-actions justify-end mt-4">
+                <%= link_to "查看详情", course_bundle_path(bundle), class: "btn-primary" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-center text-base-content/70">暂无套餐</p>
+    <% end %>
+  </div>
+</div>

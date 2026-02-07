@@ -10,6 +10,10 @@ class CoursesController < ApplicationController
     
     # 获取用户的订阅信息
     @subscriptions = current_user ? current_user.subscriptions.active.index_by(&:course_id) : {}
+    
+    # 获取 3 课联报套餐（只显示第一个 active 的套餐）
+    @course_bundle = CourseBundle.active.first
+    @bundle_subscription = current_user && @course_bundle ? current_user.bundle_subscriptions.active.find_by(course_bundle: @course_bundle) : nil
   end
 
   def show
@@ -20,7 +24,7 @@ class CoursesController < ApplicationController
   def purchase
     # 检查是否已经订阅
     if current_user.subscriptions.active.exists?(course: @course)
-      redirect_to @course, alert: '您已经购买过该课程'
+      redirect_to course_path(@course), alert: '您已经购买过该课程'
       return
     end
 
