@@ -121,7 +121,9 @@ Rails.application.routes.draw do
 
   # Do not write business logic at admin dashboard
   namespace :admin do
-    resources :course_bundles
+    resources :course_bundles do
+      post :auto_create, on: :collection
+    end
     resources :products do
       member do
         post :refresh_og_image

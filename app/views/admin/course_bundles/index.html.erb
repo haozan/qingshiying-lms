@@ -4,10 +4,18 @@
   <!-- Page Title and Actions -->
   <div class="flex items-center justify-between mb-8">
     <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-50">Course bundles Management</h1>
-    <%= link_to new_admin_course_bundle_path, class: "btn-primary" do %>
-      <%= lucide_icon "plus", class: "w-5 h-5 mr-2" %>
-      New Course bundle
-    <% end %>
+    <div class="flex items-center gap-3">
+      <%= button_to auto_create_admin_course_bundles_path, method: :post, 
+          class: "btn-success flex items-center gap-2",
+          data: { confirm: "确认创建标准套餐？\n\n套餐名称：3 课联报特惠\n包含课程：AI课程、写作运营课、AI编程课\n原价：￥30,000 元\n现价：￥15,000 元\n早鸟价：￥9,000 元" } do %>
+        <%= lucide_icon "zap", class: "w-5 h-5" %>
+        <span>一键创建标准套餐</span>
+      <% end %>
+      <%= link_to new_admin_course_bundle_path, class: "btn-primary" do %>
+        <%= lucide_icon "plus", class: "w-5 h-5 mr-2" %>
+        New Course bundle
+      <% end %>
+    </div>
   </div>
 
   <!-- Course bundles Table -->

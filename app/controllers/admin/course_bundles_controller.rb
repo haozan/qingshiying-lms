@@ -38,6 +38,17 @@ class Admin::CourseBundlesController < Admin::BaseController
     redirect_to admin_course_bundles_path, notice: 'Course bundle was successfully deleted.'
   end
 
+  # 一键创建标准套餐
+  def auto_create
+    result = AutoCreateCourseBundleService.new.call
+
+    if result[:success]
+      redirect_to admin_course_bundles_path, notice: result[:message]
+    else
+      redirect_to admin_course_bundles_path, alert: result[:message]
+    end
+  end
+
   private
 
   def set_course_bundle
